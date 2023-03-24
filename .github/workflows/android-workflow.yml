@@ -1,0 +1,27 @@
+name: Android Workflow
+run-name: ${{github.actor}} start Android Workflow
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main
+jobs:
+  Continuous-Integration:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Download Repository ven-app-front
+        uses: actions/checkout@v3
+      - name: Download Repository ven-script-shelltool
+        uses: actions/checkout@v3
+        with:
+          repository: ven-startup/ven-script-shelltool
+          ref: main
+          token: ${{secrets.GITHUBACTION_PERSONAL_ACCESS_TOKEN}}
+          path: .shelltool/
+      - name: Gitflow Test Build Distribution for Android
+        uses: ./.shelltool/workflows/mobile/android
