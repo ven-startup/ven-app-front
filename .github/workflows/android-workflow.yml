@@ -25,3 +25,6 @@ jobs:
           path: .shelltool/
       - name: Gitflow Test Build Distribution for Android
         uses: ./.shelltool/workflows/mobile/android
+        with:
+          FIREBASE_TOKEN: ${FIREBASE_TOKEN}
+          FIREBASE_APP_ID_ANDROID: ${FIREBASE_APP_ID_ANDROID}
