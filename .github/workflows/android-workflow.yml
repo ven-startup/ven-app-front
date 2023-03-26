@@ -10,7 +10,7 @@ on:
       - main
 jobs:
   Continuous-Integration:
-    if: startsWith(${{github.head_ref}}, 'feature/')
+    if: startsWith(github.head_ref, 'feature')
     name: Continuous Integration
     runs-on: ubuntu-latest
     timeout-minutes: 30
