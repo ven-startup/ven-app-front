@@ -24,6 +24,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import {API_URL} from './utils/constants.util';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -77,8 +78,7 @@ function App(): JSX.Element {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
+            <Text style={styles.highlight}>{API_URL}</Text>
           </Section>
           <Section title="See Your Changes">
             <ReloadInstructions />

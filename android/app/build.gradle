@@ -1,5 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
+// Additional config for react-native-config
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 import com.android.build.OutputFile
 
@@ -165,6 +167,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    // Additional config for react-native-config
+    implementation project(':react-native-config')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
