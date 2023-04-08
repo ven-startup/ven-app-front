@@ -1,10 +1,12 @@
+import {Auth} from 'aws-amplify';
 import * as React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Button, StyleSheet, Text, View} from 'react-native';
 
 const NicknameScreen = () => {
   return (
-    <View style={styles.container}>
-      <Text>nicknameScreen</Text>
+    <View>
+      <Button title="Sign Out" onPress={() => Auth.signOut()} />
+      <Text style={styles.title}>NicknameScreen</Text>
     </View>
   );
 };
@@ -12,5 +14,7 @@ const NicknameScreen = () => {
 export default NicknameScreen;
 
 const styles = StyleSheet.create({
-  container: {},
+  title: {
+    color: 'black',
+  },
 });

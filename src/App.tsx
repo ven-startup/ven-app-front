@@ -3,7 +3,10 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from './screens/login/login.screen';
 import NicknameScreen from './screens/nickname/nickname.screen';
+import amplifyConfiguration from '../amplify.config';
+import {Amplify} from 'aws-amplify';
 
+Amplify.configure(amplifyConfiguration);
 const Stack = createNativeStackNavigator();
 
 const App = () => {
