@@ -3,55 +3,68 @@ import {Auth, Hub} from 'aws-amplify';
 import * as React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {User, UserContext} from '../../contexts/user.context';
+import {
+  convertSignInEventDataToAuthentication,
+  validatedAuthenticated,
+} from '../../security/authentication/authentication';
 import {fonts} from '../../themes/fonts.themes';
 import google from './../../../assets/images/google.png';
 
-const UserContext = React.createContext(null);
-
-const LoginScreen = ({navigation}: any) => {
-  const [userState, setUserState] = React.useState(null);
+const LoginScreen = ({navigation, route}: any) => {
+  const userContext = React.useContext(UserContext);
 
   React.useEffect(() => {
     const unsubscribe = Hub.listen('auth', ({payload: {event, data}}) => {
+      console.log('event', event);
+      console.log('data', data);
       switch (event) {
         case 'signIn':
-          setUserState(data);
-          navigation.navigate('Nickname');
+          userContext.authentication =
+            convertSignInEventDataToAuthentication(data);
+          console.log('userContext', userContext);
+          validatedAuthenticated(navigation, route);
           break;
         case 'signOut':
-          setUserState(null);
-          navigation.navigate('Login');
+          const keys = Object.keys(userContext);
+          keys.forEach(key => {
+            delete userContext[key as keyof User];
+          });
+          console.log('userContext', userContext);
+          validatedAuthenticated(navigation, route);
           break;
         case 'signIn_failure':
         case 'cognitoHostedUI_failure':
           console.log('Sign in failure', data);
           break;
+        default:
+          console.log('default');
+          break;
       }
     });
+    validatedAuthenticated(navigation, route);
     return unsubscribe;
-  }, [navigation]);
+  }, [userContext, navigation, route]);
 
   return (
-    <UserContext.Provider value={userState}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.title}>Just Talk</Text>
-          <Text style={styles.subtitle}>
-            Conversa al instante con personas que quieren escucharte!
-          </Text>
-        </View>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            onPress={() =>
-              Auth.federatedSignIn({
-                provider: CognitoHostedUIIdentityProvider.Google,
-              })
-            }>
-            <Image source={google} style={styles.googleButton} />
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
-    </UserContext.Provider>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>Just Talk</Text>
+        <Text style={styles.subtitle}>
+          Conversa al instante con personas que quieren escucharte!
+        </Text>
+      </View>
+      <View style={styles.buttonsContainer}>
+        <TouchableOpacity
+          onPress={() =>
+            Auth.federatedSignIn({
+              provider: CognitoHostedUIIdentityProvider.Google,
+            })
+          }>
+          <Image source={google} style={styles.googleButton} />
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
