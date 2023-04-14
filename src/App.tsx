@@ -1,10 +1,11 @@
-import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import LoginScreen from './screens/login/login.screen';
-import NicknameScreen from './screens/nickname/nickname.screen';
-import amplifyConfiguration from '../amplify.config';
 import {Amplify} from 'aws-amplify';
+import * as React from 'react';
+import amplifyConfiguration from '../amplify.config';
+import LoginScreen from './screens/login/login.screen';
+import MyDataScreen from './screens/my-data/my-data.screen';
+import NicknameScreen from './screens/nickname/nickname.screen';
 
 Amplify.configure(amplifyConfiguration);
 const Stack = createNativeStackNavigator();
@@ -18,11 +19,8 @@ const App = () => {
           headerShown: false,
         }}>
         <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen
-          name="Nickname"
-          component={NicknameScreen}
-          options={{title: 'Second'}}
-        />
+        <Stack.Screen name="Nickname" component={NicknameScreen} />
+        <Stack.Screen name="MyData" component={MyDataScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
