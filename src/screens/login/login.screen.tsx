@@ -15,7 +15,7 @@ const LoginScreen = ({navigation, route}: any) => {
   const userContext = React.useContext(UserContext);
 
   React.useEffect(() => {
-    const unsubscribe = Hub.listen('auth', ({payload: {event, data}}) => {
+    const listener = Hub.listen('auth', ({payload: {event, data}}) => {
       console.log('event', event);
       console.log('data', data);
       switch (event) {
@@ -43,7 +43,7 @@ const LoginScreen = ({navigation, route}: any) => {
       }
     });
     validatedAuthenticated(navigation, route);
-    return unsubscribe;
+    return listener;
   }, [userContext, navigation, route]);
 
   return (

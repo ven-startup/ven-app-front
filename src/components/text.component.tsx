@@ -2,23 +2,25 @@ import * as React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {fonts} from '../themes/fonts.themes';
 
-const ErrorComponent = ({text, size = 14, style}: any) => {
+const TextComponent = ({text, style}: any) => {
   return (
-    <View style={{...styles.errorContainer, ...style}}>
-      <Text style={{...styles.error, fontSize: size}}>{text}</Text>
+    <View style={styles.textContainer}>
+      <Text style={{...styles.text, ...style}}>{text}</Text>
     </View>
   );
 };
 
-export default ErrorComponent;
+export default TextComponent;
 
 const styles = StyleSheet.create({
-  errorContainer: {
+  textContainer: {
+    justifyContent: 'center',
     backgroundColor: 'white',
   },
-  error: {
+  text: {
     fontFamily: fonts.ArialRoundedMT,
+    fontSize: 16,
     textAlign: 'left',
-    color: '#FF2424',
+    color: 'black',
   },
 });
