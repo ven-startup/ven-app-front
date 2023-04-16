@@ -4,7 +4,7 @@ export interface User {
   authentication?: Authentication;
   nickname?: string;
   birthday?: string;
-  gender?: Gender;
+  gender?: Gender | string;
   topicsToTalk?: [string];
   topicsToListen?: [string];
 }
