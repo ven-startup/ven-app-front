@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Amplify} from 'aws-amplify';
 import * as React from 'react';
 import amplifyConfiguration from '../amplify.config';
+import HomeScreen from './screens/home/home.screen';
 import LoginScreen from './screens/login/login.screen';
 import MyDataScreen from './screens/my-data/my-data.screen';
 import NicknameScreen from './screens/nickname/nickname.screen';
@@ -23,6 +24,7 @@ const App = () => {
         <Stack.Screen name="Nickname" component={NicknameScreen} />
         <Stack.Screen name="MyData" component={MyDataScreen} />
         <Stack.Screen name="TopicsToTalk" component={TopicsToTalkScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

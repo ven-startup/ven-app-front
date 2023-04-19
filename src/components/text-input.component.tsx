@@ -15,6 +15,7 @@ const TextInputComponent = ({
   image,
   onPressIn,
   onChangeText,
+  onSubmitEditing,
 }: any) => {
   return (
     <TouchableOpacity onPress={onPressIn}>
@@ -27,6 +28,7 @@ const TextInputComponent = ({
           editable={editable}
           onFocus={onPressIn}
           onChangeText={onChangeText}
+          onSubmitEditing={onSubmitEditing}
         />
         {image && (
           <View style={styles.imageContainer}>

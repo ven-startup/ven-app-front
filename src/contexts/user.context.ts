@@ -5,8 +5,8 @@ export interface User {
   nickname?: string;
   birthday?: string;
   gender?: Gender | string;
-  topicsToTalk?: [string];
-  topicsToListen?: [string];
+  topicsToTalk?: string[];
+  topicsToListen?: string[];
 }
 
 export interface Authentication {
