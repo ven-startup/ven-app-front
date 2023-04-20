@@ -1,3 +1,5 @@
+import {API} from '@aws-amplify/api';
+import {GraphQLQuery} from '@aws-amplify/api/lib-esm/types';
 import * as React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import ErrorComponent from '../../components/error.component';
@@ -8,6 +10,10 @@ import SubtitleComponent from '../../components/subtitle.component';
 import TextInputComponent from '../../components/text-input.component';
 import TitleComponent from '../../components/title.component';
 import {UserContext} from '../../contexts/user.context';
+import {
+  CreateUser,
+  createUserMutation,
+} from '../../graphql/user/mutations.user.graphql';
 
 const TopicsToTalkScreen = ({navigation}: any) => {
   const userContext = React.useContext(UserContext);
@@ -25,9 +31,10 @@ const TopicsToTalkScreen = ({navigation}: any) => {
   const onPressBackButton = () => {
     navigation.navigate('MyData');
   };
-  const onPressNextButton = () => {
+  const onPressNextButton = async () => {
     if (isValidateListOfTopicToTalk(listOfTopicToTalk)) {
-      userContext.topicsToTalk = listOfTopicToTalk;
+      userContext.user.topicsToTalk = listOfTopicToTalk;
+      await createUser();
       navigation.navigate('Home');
     }
   };
@@ -80,6 +87,27 @@ const TopicsToTalkScreen = ({navigation}: any) => {
       return false;
     }
     return isValidated;
+  };
+
+  // Persistence
+  const createUser = async () => {
+    try {
+      const response = await API.graphql<GraphQLQuery<CreateUser>>(
+        createUserMutation({
+          nickname: userContext.user.nickname as string,
+          birthday: userContext.user.birthday as string,
+          gender: userContext.user.gender as string,
+          topicsToTalk: userContext.user.topicsToTalk as string[],
+          topicsToListen: userContext.user.topicsToListen as string[],
+        }),
+      );
+      userContext.user = {...response?.data?.createUser};
+      console.info(
+        `User ${userContext.user.nickname} was registered correctly`,
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <SafeAreaView style={styles.topicsToTalkContainer}>

@@ -39,8 +39,8 @@ const MyDataScreen = ({navigation}: any) => {
   };
   const onPressNextButton = () => {
     if (isValidateBirthday(birthday) && isValidateGender(gender)) {
-      userContext.birthday = birthday;
-      userContext.gender = gender;
+      userContext.user.birthday = birthday;
+      userContext.user.gender = gender;
       navigation.navigate('TopicsToTalk');
     }
   };

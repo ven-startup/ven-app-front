@@ -23,7 +23,7 @@ const NicknameScreen = ({navigation, route}: any) => {
   };
   const onPressNextButton = () => {
     if (isValidate(nickname)) {
-      userContext.nickname = nickname;
+      userContext.user.nickname = nickname;
       navigation.navigate('MyData');
     }
   };

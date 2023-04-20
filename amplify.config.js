@@ -18,6 +18,10 @@ const amplifyConfiguration = {
       responseType: 'code', // or 'token', note that REFRESH token will only be generated when the responseType is code
     },
   },
+  aws_appsync_graphqlEndpoint:
+    'https://rxyhavn6bnci7bebzi672wn43e.appsync-api.us-east-1.amazonaws.com/graphql',
+  aws_appsync_region: 'us-east-1',
+  aws_appsync_authenticationType: 'AMAZON_COGNITO_USER_POOLS',
 };
 
 export default amplifyConfiguration;
