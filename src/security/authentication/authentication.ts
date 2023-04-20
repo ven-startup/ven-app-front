@@ -17,11 +17,12 @@ export const validatedAuthenticated = (
 ) => {
   Auth.currentAuthenticatedUser()
     .then(() => {
-      console.log('Authenticated');
+      console.info('ValidatedAuthenticated Success');
       navigation.navigate('Nickname');
     })
     .catch(() => {
-      console.log('Not Authenticated', route.name);
+      console.warn('ValidatedAuthenticated Failed');
+      console.warn('Current Screen', route.name);
       if (route.name !== 'Login') {
         navigation.navigate('Login');
       }
