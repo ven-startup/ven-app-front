@@ -1,3 +1,7 @@
+export type Operation = {
+  createUser: User;
+  getUser: User;
+};
 export interface User {
   user?: string;
   nickname?: string;

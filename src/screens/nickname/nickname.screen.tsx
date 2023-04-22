@@ -10,15 +10,23 @@ import TextInputComponent from '../../components/text-input.component';
 import TitleComponent from '../../components/title.component';
 import {UserContext} from '../../contexts/user.context';
 import {validatedAuthenticated} from '../../security/authentication/authentication';
+import LoadingComponent from '../../components/loading.component';
 
 const NicknameScreen = ({navigation, route}: any) => {
   const userContext = React.useContext(UserContext);
+  const [isLoading, setIsLoading] = React.useState(false);
   const [nickname, setNickname] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
 
   const onPressBackButton = () => {
     Auth.signOut().then(() => {
-      validatedAuthenticated(navigation, route);
+      validatedAuthenticated(
+        userContext,
+        null,
+        navigation,
+        route,
+        setIsLoading,
+      );
     });
   };
   const onPressNextButton = () => {
@@ -54,7 +62,9 @@ const NicknameScreen = ({navigation, route}: any) => {
     }
     return validated;
   };
-
+  if (isLoading) {
+    return <LoadingComponent />;
+  }
   return (
     <SafeAreaView style={styles.nicknameContainer}>
       <NavigationComponent
@@ -62,7 +72,7 @@ const NicknameScreen = ({navigation, route}: any) => {
         onPressNextButton={onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={4} actualStep={1} style={styles.step} />
+      <StepComponent total={3} actualStep={1} style={styles.step} />
       <TitleComponent text="Nickname" style={styles.title} />
       <SubtitleComponent
         text="¿Con que nombre quieres que te conozcan?"

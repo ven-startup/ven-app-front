@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-export interface UserContext {
+export interface UserContextInterface {
   authentication?: Authentication;
   user: User;
 }
@@ -25,17 +25,15 @@ export enum Gender {
   FEMALE = 'female',
 }
 
-export const UserContextInit = {
-  user: {
-    user: '',
-    nickname: '',
-    birthday: '',
-    gender: '',
-    topicsToTalk: [],
-    topicsToListen: [],
-  },
+export const UserInit = {
+  user: '',
+  nickname: '',
+  birthday: '',
+  gender: '',
+  topicsToTalk: [],
+  topicsToListen: [],
 };
 
-export const UserContext = React.createContext<UserContext>({
-  ...UserContextInit,
+export const UserContext = React.createContext<UserContextInterface>({
+  user: {...UserInit},
 });

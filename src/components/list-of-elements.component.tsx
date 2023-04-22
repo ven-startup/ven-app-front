@@ -10,27 +10,39 @@ import {
 interface ListOfElementsComponentProps {
   styles: Record<string, string | number>;
   elements: string[];
-  removeElement: (index: number) => void;
+  removeElement?: (index: number) => void;
 }
 
 const ListOfElementsComponent = (props: ListOfElementsComponentProps) => {
   return (
     <ScrollView>
       <View style={{...styles.ListOfElementscontainer, ...props.styles}}>
-        {props.elements.map((element: string, index: number) => (
-          <View key={element} style={styles.element}>
-            <Text key={element} style={styles.elementText}>
-              {element}
-            </Text>
-            <TouchableOpacity
-              style={styles.elementButton}
-              onPress={() => {
-                props.removeElement(index);
-              }}>
-              <Text style={styles.elementButtonText}>x</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+        {props.elements.map((element: string, index: number) => {
+          if (props.removeElement) {
+            return (
+              <View key={element} style={styles.element}>
+                <Text key={element} style={styles.elementText}>
+                  {element}
+                </Text>
+                <TouchableOpacity
+                  style={styles.elementButton}
+                  onPress={() => {
+                    props.removeElement && props.removeElement(index);
+                  }}>
+                  <Text style={styles.elementButtonText}>x</Text>
+                </TouchableOpacity>
+              </View>
+            );
+          } else {
+            return (
+              <View key={element} style={styles.elementView}>
+                <Text key={element} style={styles.elementText}>
+                  {element}
+                </Text>
+              </View>
+            );
+          }
+        })}
       </View>
     </ScrollView>
   );
@@ -74,5 +86,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
     color: 'white',
+  },
+  elementView: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+    borderColor: '#707070',
+    marginRight: 5,
+    marginBottom: 12,
+    backgroundColor: 'white',
   },
 });

@@ -10,10 +10,8 @@ import SubtitleComponent from '../../components/subtitle.component';
 import TextInputComponent from '../../components/text-input.component';
 import TitleComponent from '../../components/title.component';
 import {UserContext} from '../../contexts/user.context';
-import {
-  CreateUser,
-  createUserMutation,
-} from '../../graphql/user/mutations.user.graphql';
+import {createUserMutation} from '../../graphql/user/mutations.user.graphql';
+import {Operation} from '../../graphql/user/types.user.graphql';
 
 const TopicsToTalkScreen = ({navigation}: any) => {
   const userContext = React.useContext(UserContext);
@@ -92,7 +90,7 @@ const TopicsToTalkScreen = ({navigation}: any) => {
   // Persistence
   const createUser = async () => {
     try {
-      const response = await API.graphql<GraphQLQuery<CreateUser>>(
+      const response = await API.graphql<GraphQLQuery<Operation>>(
         createUserMutation({
           nickname: userContext.user.nickname as string,
           birthday: userContext.user.birthday as string,
@@ -116,7 +114,7 @@ const TopicsToTalkScreen = ({navigation}: any) => {
         onPressNextButton={onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={4} actualStep={3} style={styles.step} />
+      <StepComponent total={3} actualStep={3} style={styles.step} />
       <TitleComponent text="¿De que puedo hablar?" style={styles.title} />
       <SubtitleComponent
         text="Un nuevo amigo espera con ansias poder escucharte!"
