@@ -92,7 +92,7 @@ const MyDataScreen = ({navigation}: any) => {
         onPressNextButton={onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={4} actualStep={2} style={styles.step} />
+      <StepComponent total={3} actualStep={2} style={styles.step} />
       <TitleComponent text="Mis Datos" style={styles.title} />
       <SubtitleComponent
         text="Estos datos no podrán ser modificados nunca.&#10;Revísalos bien!"

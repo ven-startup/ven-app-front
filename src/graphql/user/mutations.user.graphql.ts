@@ -1,10 +1,6 @@
 import {graphqlOperation} from 'aws-amplify';
 import gql from 'graphql-tag';
-import {CreateUserInput, User} from './types.user.graphql';
-
-export type CreateUser = {
-  createUser: User;
-};
+import {CreateUserInput} from './types.user.graphql';
 
 export const createUserMutation = (createUserInput: CreateUserInput) => {
   const mutation = gql`
