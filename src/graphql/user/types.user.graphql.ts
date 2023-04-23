@@ -18,3 +18,9 @@ export interface CreateUserInput {
   topicsToTalk: string[];
   topicsToListen: string[];
 }
+
+export interface UpdateUserInput {
+  nickname?: string;
+  topicsToTalk?: string[];
+  topicsToListen?: string[];
+}

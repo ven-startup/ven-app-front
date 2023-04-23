@@ -1,33 +1,50 @@
-import {Auth} from 'aws-amplify';
+import {GraphQLQuery} from '@aws-amplify/api';
+import {API, Auth} from 'aws-amplify';
 import * as React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import ErrorComponent from '../../components/error.component';
+import LoadingComponent from '../../components/loading.component';
 import NavigationComponent from '../../components/navigation.component';
 import StepComponent from '../../components/step.component';
 import SubtitleComponent from '../../components/subtitle.component';
 import TextInputComponent from '../../components/text-input.component';
 import TitleComponent from '../../components/title.component';
 import {UserContext} from '../../contexts/user.context';
+import {updateUserMutation} from '../../graphql/user/mutations.user.graphql';
+import {Operation} from '../../graphql/user/types.user.graphql';
 import {validatedAuthenticated} from '../../security/authentication/authentication';
-import LoadingComponent from '../../components/loading.component';
 
 const NicknameScreen = ({navigation, route}: any) => {
   const userContext = React.useContext(UserContext);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [nickname, setNickname] = React.useState('');
+  const [nickname, setNickname] = React.useState(
+    userContext.user.nickname as string,
+  );
   const [errorMessage, setErrorMessage] = React.useState('');
+  const isUpdateFlow = route?.params?.isUpdateFlow;
 
-  const onPressBackButton = () => {
-    Auth.signOut().then(() => {
-      validatedAuthenticated(
-        userContext,
-        null,
-        navigation,
-        route,
-        setIsLoading,
-      );
-    });
+  const onPressBackButton = async () => {
+    if (isUpdateFlow) {
+      if (userContext.user.nickname !== nickname && isValidate(nickname)) {
+        await API.graphql<GraphQLQuery<Operation>>(
+          updateUserMutation({nickname}),
+        );
+        userContext.user.nickname = nickname;
+        setNickname(nickname);
+      }
+      navigation.navigate('Home');
+    } else {
+      Auth.signOut().then(() => {
+        validatedAuthenticated(
+          userContext,
+          null,
+          navigation,
+          route,
+          setIsLoading,
+        );
+      });
+    }
   };
   const onPressNextButton = () => {
     if (isValidate(nickname)) {
@@ -69,10 +86,14 @@ const NicknameScreen = ({navigation, route}: any) => {
     <SafeAreaView style={styles.nicknameContainer}>
       <NavigationComponent
         onPressBackButton={onPressBackButton}
-        onPressNextButton={onPressNextButton}
+        onPressNextButton={isUpdateFlow ? null : onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={3} actualStep={1} style={styles.step} />
+      {isUpdateFlow ? (
+        <View style={{height: 52}} />
+      ) : (
+        <StepComponent total={3} actualStep={1} style={styles.step} />
+      )}
       <TitleComponent text="Nickname" style={styles.title} />
       <SubtitleComponent
         text="¿Con que nombre quieres que te conozcan?"
