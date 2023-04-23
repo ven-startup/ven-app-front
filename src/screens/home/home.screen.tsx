@@ -19,9 +19,11 @@ import ListOfElementsComponent from '../../components/list-of-elements.component
 import SubtitleComponent from '../../components/subtitle.component';
 import TextComponent from '../../components/text.component';
 import {Gender, UserContext} from '../../contexts/user.context';
+import edit from '../../../assets/images/edit.png';
 
 const HomeScreen = ({navigation}: any) => {
-  const userContext = React.useContext(UserContext);
+  const context = React.useContext(UserContext);
+  const [userContext, setUserContext] = React.useState(context);
 
   const validatedAvatarForGender = () => {
     return userContext.user.gender === Gender.MALE ? male : female;
@@ -32,6 +34,11 @@ const HomeScreen = ({navigation}: any) => {
     const age = dayjs().diff(birthday, 'year');
     return age + ' años';
   };
+
+  React.useEffect(() => {
+    console.log('context', userContext);
+    setUserContext(userContext);
+  }, [navigation, userContext]);
 
   return (
     <SafeAreaView style={styles.homeContainer}>
@@ -47,6 +54,10 @@ const HomeScreen = ({navigation}: any) => {
       <SubtitleComponent
         style={styles.nickname}
         text={userContext.user.nickname}
+        icon={edit}
+        onPress={() => {
+          navigation.navigate('Nickname', {isUpdateFlow: true});
+        }}
       />
       <TextComponent style={styles.age} text={calculateYear()} />
       <View style={styles.topicsToTalkContainer}>
