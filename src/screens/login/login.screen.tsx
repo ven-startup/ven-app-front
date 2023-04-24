@@ -3,40 +3,31 @@ import {Auth, Hub} from 'aws-amplify';
 import * as React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import LoadingComponent from '../../components/loading.component';
-import {UserContext} from '../../contexts/user.context';
+import {useDispatch} from 'react-redux';
 import {validatedAuthenticated} from '../../security/authentication/authentication';
+import {setApp} from '../../store/slices/app.slice';
 import {fonts} from '../../themes/fonts.themes';
 import google from './../../../assets/images/google.png';
 
 const LoginScreen = ({navigation, route}: any) => {
-  const userContext = React.useContext(UserContext);
-  const [isLoading, setIsLoading] = React.useState(false);
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
-    const listener = Hub.listen('auth', ({payload: {event, data}}) => {
+    const listener = Hub.listen('auth', ({payload: {event}}) => {
       console.info('Listen Auth Channel');
       console.info('Event', event);
       switch (event) {
         case 'parsingCallbackUrl':
         case 'signOut':
-          validatedAuthenticated(
-            userContext,
-            data,
-            navigation,
-            route,
-            setIsLoading,
-          );
+          validatedAuthenticated(dispatch, navigation, route);
           break;
         default:
           break;
       }
     });
     return listener;
-  }, [userContext, navigation, route, setIsLoading]);
-  if (isLoading) {
-    return <LoadingComponent />;
-  }
+  }, [dispatch, navigation, route]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
@@ -51,7 +42,8 @@ const LoginScreen = ({navigation, route}: any) => {
             Auth.federatedSignIn({
               provider: CognitoHostedUIIdentityProvider.Google,
             });
-            setIsLoading(true);
+
+            dispatch(setApp({isLoading: true}));
           }}>
           <Image source={google} style={styles.googleButton} />
         </TouchableOpacity>

@@ -3,6 +3,7 @@ import * as React from 'react';
 import {StyleSheet} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useDispatch, useSelector} from 'react-redux';
 import calendar from '../../../assets/images/calendar.png';
 import ErrorComponent from '../../components/error.component';
 import NavigationComponent from '../../components/navigation.component';
@@ -12,12 +13,15 @@ import SubtitleComponent from '../../components/subtitle.component';
 import TextInputComponent from '../../components/text-input.component';
 import TextComponent from '../../components/text.component';
 import TitleComponent from '../../components/title.component';
-import {Gender, UserContext} from '../../contexts/user.context';
+import {Gender} from '../../contexts/user.context';
 import female from './../../../assets/images/female.png';
 import male from './../../../assets/images/male.png';
+import {setUser} from '../../store/slices/user.slice';
+import {RootState} from '../../store/store';
 
 const MyDataScreen = ({navigation}: any) => {
-  const userContext = React.useContext(UserContext);
+  const user = useSelector((state: RootState) => state.user.value);
+  const dispatch = useDispatch();
   // declared for birthday
   const [datePickerSelected, setDatePickerSelected] = React.useState(
     dayjs().subtract(13, 'year').toDate(),
@@ -39,8 +43,9 @@ const MyDataScreen = ({navigation}: any) => {
   };
   const onPressNextButton = () => {
     if (isValidateBirthday(birthday) && isValidateGender(gender)) {
-      userContext.user.birthday = birthday;
-      userContext.user.gender = gender;
+      user.birthday = birthday;
+      user.gender = gender;
+      dispatch(setUser(user));
       navigation.navigate('TopicsToTalk');
     }
   };
