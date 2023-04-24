@@ -1,37 +1,57 @@
-import {Auth} from 'aws-amplify';
+import {GraphQLQuery} from '@aws-amplify/api';
+import {API, Auth} from 'aws-amplify';
 import * as React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useDispatch, useSelector} from 'react-redux';
 import ErrorComponent from '../../components/error.component';
 import NavigationComponent from '../../components/navigation.component';
 import StepComponent from '../../components/step.component';
 import SubtitleComponent from '../../components/subtitle.component';
 import TextInputComponent from '../../components/text-input.component';
 import TitleComponent from '../../components/title.component';
-import {UserContext} from '../../contexts/user.context';
+import {updateUserMutation} from '../../graphql/user/mutations.user.graphql';
+import {Operation} from '../../graphql/user/types.user.graphql';
 import {validatedAuthenticated} from '../../security/authentication/authentication';
-import LoadingComponent from '../../components/loading.component';
+import {setApp} from '../../store/slices/app.slice';
+import {setUser} from '../../store/slices/user.slice';
+import {RootState} from '../../store/store';
 
 const NicknameScreen = ({navigation, route}: any) => {
-  const userContext = React.useContext(UserContext);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [nickname, setNickname] = React.useState('');
+  const user = useSelector((state: RootState) => state.user.value);
+  const dispatch = useDispatch();
+  const [nickname, setNickname] = React.useState(user.nickname as string);
   const [errorMessage, setErrorMessage] = React.useState('');
+  const isUpdateFlow = route?.params?.isUpdateFlow;
 
-  const onPressBackButton = () => {
-    Auth.signOut().then(() => {
-      validatedAuthenticated(
-        userContext,
-        null,
-        navigation,
-        route,
-        setIsLoading,
-      );
-    });
+  const onPressBackButton = async () => {
+    if (isUpdateFlow) {
+      if (user.nickname !== nickname && isValidate(nickname)) {
+        try {
+          dispatch(setApp({isLoading: true}));
+          await API.graphql<GraphQLQuery<Operation>>(
+            updateUserMutation({nickname}),
+          );
+          user.nickname = nickname;
+          setNickname(nickname);
+          dispatch(setUser(user));
+        } catch (error) {
+          console.error(error);
+        } finally {
+          dispatch(setApp({isLoading: false}));
+        }
+      }
+      navigation.navigate('Home');
+    } else {
+      Auth.signOut().then(() => {
+        validatedAuthenticated(dispatch, navigation, route);
+      });
+    }
   };
   const onPressNextButton = () => {
     if (isValidate(nickname)) {
-      userContext.user.nickname = nickname;
+      user.nickname = nickname;
+      dispatch(setUser(user));
       navigation.navigate('MyData');
     }
   };
@@ -62,17 +82,18 @@ const NicknameScreen = ({navigation, route}: any) => {
     }
     return validated;
   };
-  if (isLoading) {
-    return <LoadingComponent />;
-  }
   return (
     <SafeAreaView style={styles.nicknameContainer}>
       <NavigationComponent
         onPressBackButton={onPressBackButton}
-        onPressNextButton={onPressNextButton}
+        onPressNextButton={isUpdateFlow ? null : onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={3} actualStep={1} style={styles.step} />
+      {isUpdateFlow ? (
+        <View style={{height: 52}} />
+      ) : (
+        <StepComponent total={3} actualStep={1} style={styles.step} />
+      )}
       <TitleComponent text="Nickname" style={styles.title} />
       <SubtitleComponent
         text="¿Con que nombre quieres que te conozcan?"

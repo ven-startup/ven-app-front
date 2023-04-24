@@ -1,11 +1,20 @@
 import * as React from 'react';
 import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
+import {RootState} from '../store/store';
 
 const LoadingComponent = () => {
+  const app = useSelector((state: RootState) => state.app.value);
   return (
-    <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#000000" />
-    </View>
+    app.isLoading && (
+      <SafeAreaView
+        style={{position: 'absolute', width: '100%', height: '100%'}}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#000000" />
+        </View>
+      </SafeAreaView>
+    )
   );
 };
 
@@ -17,5 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+    opacity: 0.5,
   },
 });

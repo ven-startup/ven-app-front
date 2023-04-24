@@ -11,6 +11,8 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
+import edit from '../../../assets/images/edit.png';
 import female from '../../../assets/images/female.png';
 import male from '../../../assets/images/male.png';
 import off from '../../../assets/images/off.png';
@@ -18,17 +20,18 @@ import ButtonComponent from '../../components/button.component';
 import ListOfElementsComponent from '../../components/list-of-elements.component';
 import SubtitleComponent from '../../components/subtitle.component';
 import TextComponent from '../../components/text.component';
-import {Gender, UserContext} from '../../contexts/user.context';
+import {Gender} from '../../contexts/user.context';
+import {RootState} from '../../store/store';
 
 const HomeScreen = ({navigation}: any) => {
-  const userContext = React.useContext(UserContext);
+  const user = useSelector((state: RootState) => state.user.value);
 
   const validatedAvatarForGender = () => {
-    return userContext.user.gender === Gender.MALE ? male : female;
+    return user.gender === Gender.MALE ? male : female;
   };
   const calculateYear = () => {
     dayjs.extend(customParseFormat);
-    const birthday = dayjs(userContext.user.birthday, 'DD/MM/YYYY');
+    const birthday = dayjs(user.birthday, 'DD/MM/YYYY');
     const age = dayjs().diff(birthday, 'year');
     return age + ' años';
   };
@@ -46,7 +49,11 @@ const HomeScreen = ({navigation}: any) => {
       <Image style={styles.avatar} source={validatedAvatarForGender()} />
       <SubtitleComponent
         style={styles.nickname}
-        text={userContext.user.nickname}
+        text={user.nickname}
+        icon={edit}
+        onPress={() => {
+          navigation.navigate('Nickname', {isUpdateFlow: true});
+        }}
       />
       <TextComponent style={styles.age} text={calculateYear()} />
       <View style={styles.topicsToTalkContainer}>
@@ -65,7 +72,7 @@ const HomeScreen = ({navigation}: any) => {
       </TouchableHighlight>
       <ListOfElementsComponent
         styles={{}}
-        elements={userContext.user.topicsToTalk as string[]}
+        elements={user.topicsToTalk as string[]}
       />
       <ButtonComponent
         styles={styles.talkButton}

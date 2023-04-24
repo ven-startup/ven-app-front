@@ -2,6 +2,7 @@ import {API} from '@aws-amplify/api';
 import {GraphQLQuery} from '@aws-amplify/api/lib-esm/types';
 import * as React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
+import {useDispatch, useSelector} from 'react-redux';
 import ErrorComponent from '../../components/error.component';
 import ListOfElementsComponent from '../../components/list-of-elements.component';
 import NavigationComponent from '../../components/navigation.component';
@@ -9,12 +10,15 @@ import StepComponent from '../../components/step.component';
 import SubtitleComponent from '../../components/subtitle.component';
 import TextInputComponent from '../../components/text-input.component';
 import TitleComponent from '../../components/title.component';
-import {UserContext} from '../../contexts/user.context';
 import {createUserMutation} from '../../graphql/user/mutations.user.graphql';
 import {Operation} from '../../graphql/user/types.user.graphql';
+import {setApp} from '../../store/slices/app.slice';
+import {setUser} from '../../store/slices/user.slice';
+import {RootState} from '../../store/store';
 
 const TopicsToTalkScreen = ({navigation}: any) => {
-  const userContext = React.useContext(UserContext);
+  const user = useSelector((state: RootState) => state.user.value);
+  const dispatch = useDispatch();
 
   // declared for topic to talk
   const [topicToTalk, setTopicToTalk] = React.useState('');
@@ -31,7 +35,8 @@ const TopicsToTalkScreen = ({navigation}: any) => {
   };
   const onPressNextButton = async () => {
     if (isValidateListOfTopicToTalk(listOfTopicToTalk)) {
-      userContext.user.topicsToTalk = listOfTopicToTalk;
+      user.topicsToTalk = listOfTopicToTalk;
+      dispatch(setUser(user));
       await createUser();
       navigation.navigate('Home');
     }
@@ -90,21 +95,22 @@ const TopicsToTalkScreen = ({navigation}: any) => {
   // Persistence
   const createUser = async () => {
     try {
+      dispatch(setApp({isLoading: true}));
       const response = await API.graphql<GraphQLQuery<Operation>>(
         createUserMutation({
-          nickname: userContext.user.nickname as string,
-          birthday: userContext.user.birthday as string,
-          gender: userContext.user.gender as string,
-          topicsToTalk: userContext.user.topicsToTalk as string[],
-          topicsToListen: userContext.user.topicsToListen as string[],
+          nickname: user.nickname as string,
+          birthday: user.birthday as string,
+          gender: user.gender as string,
+          topicsToTalk: user.topicsToTalk as string[],
+          topicsToListen: user.topicsToListen as string[],
         }),
       );
-      userContext.user = {...response?.data?.createUser};
-      console.info(
-        `User ${userContext.user.nickname} was registered correctly`,
-      );
+      dispatch(setUser({...response?.data?.createUser}));
+      console.info(`User ${user.nickname} was registered correctly`);
     } catch (error) {
       console.error(error);
+    } finally {
+      dispatch(setApp({isLoading: false}));
     }
   };
   return (

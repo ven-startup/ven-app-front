@@ -1,6 +1,6 @@
 import {graphqlOperation} from 'aws-amplify';
 import gql from 'graphql-tag';
-import {CreateUserInput} from './types.user.graphql';
+import {CreateUserInput, UpdateUserInput} from './types.user.graphql';
 
 export const createUserMutation = (createUserInput: CreateUserInput) => {
   const mutation = gql`
@@ -16,4 +16,15 @@ export const createUserMutation = (createUserInput: CreateUserInput) => {
     }
   `;
   return graphqlOperation(mutation, {input: createUserInput});
+};
+
+export const updateUserMutation = (updateUserInput: UpdateUserInput) => {
+  const mutation = gql`
+    mutation UpdateUserMutation($input: UpdateUserInput!) {
+      updateUser(input: $input) {
+        user
+      }
+    }
+  `;
+  return graphqlOperation(mutation, {input: updateUserInput});
 };
