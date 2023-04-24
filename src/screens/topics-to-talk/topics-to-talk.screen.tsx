@@ -1,7 +1,7 @@
 import {API} from '@aws-amplify/api';
 import {GraphQLQuery} from '@aws-amplify/api/lib-esm/types';
 import * as React from 'react';
-import {SafeAreaView, StyleSheet} from 'react-native';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import ErrorComponent from '../../components/error.component';
 import ListOfElementsComponent from '../../components/list-of-elements.component';
@@ -10,28 +10,55 @@ import StepComponent from '../../components/step.component';
 import SubtitleComponent from '../../components/subtitle.component';
 import TextInputComponent from '../../components/text-input.component';
 import TitleComponent from '../../components/title.component';
-import {createUserMutation} from '../../graphql/user/mutations.user.graphql';
+import {
+  createUserMutation,
+  updateUserMutation,
+} from '../../graphql/user/mutations.user.graphql';
 import {Operation} from '../../graphql/user/types.user.graphql';
 import {setApp} from '../../store/slices/app.slice';
 import {setUser} from '../../store/slices/user.slice';
 import {RootState} from '../../store/store';
 
-const TopicsToTalkScreen = ({navigation}: any) => {
+const TopicsToTalkScreen = ({navigation, route}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
   const dispatch = useDispatch();
+
+  const isUpdateFlow = route?.params?.isUpdateFlow;
 
   // declared for topic to talk
   const [topicToTalk, setTopicToTalk] = React.useState('');
 
   // declared for list of topic to talk
-  const [listOfTopicToTalk, setListOfTopicToTalk] = React.useState<string[]>(
-    [],
-  );
+  const [listOfTopicToTalk, setListOfTopicToTalk] = React.useState<string[]>([
+    ...user.topicsToTalk,
+  ]);
 
   const [errorMessage, setErrorMessage] = React.useState('');
 
-  const onPressBackButton = () => {
-    navigation.navigate('MyData');
+  const onPressBackButton = async () => {
+    if (isUpdateFlow) {
+      if (
+        user.topicsToTalk !== listOfTopicToTalk &&
+        isValidateListOfTopicToTalk(listOfTopicToTalk)
+      ) {
+        try {
+          dispatch(setApp({isLoading: true}));
+          await API.graphql<GraphQLQuery<Operation>>(
+            updateUserMutation({topicsToListen: listOfTopicToTalk}),
+          );
+          user.topicsToTalk = listOfTopicToTalk;
+          setListOfTopicToTalk(listOfTopicToTalk);
+          dispatch(setUser(user));
+        } catch (error) {
+          console.error(error);
+        } finally {
+          dispatch(setApp({isLoading: false}));
+        }
+      }
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('MyData');
+    }
   };
   const onPressNextButton = async () => {
     if (isValidateListOfTopicToTalk(listOfTopicToTalk)) {
@@ -117,10 +144,14 @@ const TopicsToTalkScreen = ({navigation}: any) => {
     <SafeAreaView style={styles.topicsToTalkContainer}>
       <NavigationComponent
         onPressBackButton={onPressBackButton}
-        onPressNextButton={onPressNextButton}
+        onPressNextButton={isUpdateFlow ? null : onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={3} actualStep={3} style={styles.step} />
+      {isUpdateFlow ? (
+        <View style={{height: 52}} />
+      ) : (
+        <StepComponent total={3} actualStep={3} style={styles.step} />
+      )}
       <TitleComponent text="¿De que puedo hablar?" style={styles.title} />
       <SubtitleComponent
         text="Un nuevo amigo espera con ansias poder escucharte!"

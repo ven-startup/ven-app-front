@@ -60,6 +60,10 @@ const HomeScreen = ({navigation}: any) => {
         <SubtitleComponent
           style={styles.topicsToTalkSubTitle}
           text={'Puedo hablar de ...'}
+          icon={edit}
+          onPress={() => {
+            navigation.navigate('TopicsToTalk', {isUpdateFlow: true});
+          }}
         />
       </View>
       <TouchableHighlight
