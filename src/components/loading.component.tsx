@@ -8,9 +8,8 @@ const LoadingComponent = () => {
   const app = useSelector((state: RootState) => state.app.value);
   return (
     app.isLoading && (
-      <SafeAreaView
-        style={{position: 'absolute', width: '100%', height: '100%'}}>
-        <View style={styles.loadingContainer}>
+      <SafeAreaView style={styles.loadingContainer}>
+        <View style={styles.activityContainer}>
           <ActivityIndicator size="large" color="#000000" />
         </View>
       </SafeAreaView>
@@ -21,7 +20,8 @@ const LoadingComponent = () => {
 export default LoadingComponent;
 
 const styles = StyleSheet.create({
-  loadingContainer: {
+  loadingContainer: {position: 'absolute', width: '100%', height: '100%'},
+  activityContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

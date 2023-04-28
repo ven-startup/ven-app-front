@@ -3,6 +3,7 @@ import {Text, View, StyleSheet, TouchableHighlight} from 'react-native';
 
 interface ButtonComponentProps {
   styles?: Record<string, string | number>;
+  text: string;
   onPress?: () => any;
 }
 
@@ -10,7 +11,7 @@ const ButtonComponent = (props: ButtonComponentProps) => {
   return (
     <TouchableHighlight onPress={props.onPress}>
       <View style={styles.buttonContainer}>
-        <Text style={{...styles.text, ...props.styles}}>Conversar</Text>
+        <Text style={{...styles.text, ...props.styles}}>{props.text}</Text>
       </View>
     </TouchableHighlight>
   );

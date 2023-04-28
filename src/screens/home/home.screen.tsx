@@ -2,14 +2,7 @@ import {Auth} from 'aws-amplify';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import * as React from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useSelector} from 'react-redux';
 import edit from '../../../assets/images/edit.png';
@@ -66,20 +59,13 @@ const HomeScreen = ({navigation}: any) => {
           }}
         />
       </View>
-      <TouchableHighlight
-        onPress={() => {
-          navigation.navigate('TopicsToListen');
-        }}>
-        <View>
-          <Text>Conversar</Text>
-        </View>
-      </TouchableHighlight>
       <ListOfElementsComponent
         styles={{}}
         elements={user.topicsToTalk as string[]}
       />
       <ButtonComponent
         styles={styles.talkButton}
+        text="Conversar"
         onPress={() => {
           navigation.navigate('TopicsToListen');
         }}

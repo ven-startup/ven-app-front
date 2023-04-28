@@ -30,7 +30,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
 
   // declared for list of topic to talk
   const [listOfTopicToTalk, setListOfTopicToTalk] = React.useState<string[]>([
-    ...user.topicsToTalk,
+    ...(user.topicsToTalk as string[]),
   ]);
 
   const [errorMessage, setErrorMessage] = React.useState('');
@@ -95,16 +95,18 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
           topicToTalkRegister.toLowerCase() === topicToTalk.toLowerCase(),
       )
     ) {
-      listOfTopicToTalk.push('#'.concat(topicToTalk));
-      setListOfTopicToTalk([...listOfTopicToTalk]);
+      const newListOfTopicToTalk = [...listOfTopicToTalk];
+      newListOfTopicToTalk.push('#'.concat(topicToTalk));
+      setListOfTopicToTalk(newListOfTopicToTalk);
       setTopicToTalk('');
     }
   };
 
   /// Functions for list for topics to talk
   const removeTopicToTalk = (indexOfListOfTopicToTalk: number) => {
-    listOfTopicToTalk.splice(indexOfListOfTopicToTalk, 1);
-    setListOfTopicToTalk([...listOfTopicToTalk]);
+    const newListOfTopicToTalk = [...listOfTopicToTalk];
+    newListOfTopicToTalk.splice(indexOfListOfTopicToTalk, 1);
+    setListOfTopicToTalk(newListOfTopicToTalk);
     return listOfTopicToTalk;
   };
   const isValidateListOfTopicToTalk = (newListOfTopicToTalk: string[]) => {
@@ -148,7 +150,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
         style={styles.navigation}
       />
       {isUpdateFlow ? (
-        <View style={{height: 52}} />
+        <View style={styles.spaceVertical} />
       ) : (
         <StepComponent total={3} actualStep={3} style={styles.step} />
       )}
@@ -184,6 +186,9 @@ const styles = StyleSheet.create({
   },
   navigation: {
     marginBottom: 12,
+  },
+  spaceVertical: {
+    height: 52,
   },
   step: {
     marginBottom: 27,
