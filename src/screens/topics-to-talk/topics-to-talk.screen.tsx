@@ -44,7 +44,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
         try {
           dispatch(setApp({isLoading: true}));
           await API.graphql<GraphQLQuery<Operation>>(
-            updateUserMutation({topicsToListen: listOfTopicToTalk}),
+            updateUserMutation({topicsToTalk: listOfTopicToTalk}),
           );
           user.topicsToTalk = listOfTopicToTalk;
           setListOfTopicToTalk(listOfTopicToTalk);
@@ -96,7 +96,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
       )
     ) {
       const newListOfTopicToTalk = [...listOfTopicToTalk];
-      newListOfTopicToTalk.push('#'.concat(topicToTalk));
+      newListOfTopicToTalk.push(topicToTalk);
       setListOfTopicToTalk(newListOfTopicToTalk);
       setTopicToTalk('');
     }
@@ -162,6 +162,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
       <ListOfElementsComponent
         styles={{}}
         elements={listOfTopicToTalk}
+        prefix="#"
         removeElement={removeTopicToTalk}
       />
       <TextInputComponent

@@ -1,3 +1,5 @@
+import {API} from '@aws-amplify/api';
+import {GraphQLQuery} from '@aws-amplify/api/lib-esm/types';
 import {Auth} from 'aws-amplify';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -14,6 +16,8 @@ import ListOfElementsComponent from '../../components/list-of-elements.component
 import SubtitleComponent from '../../components/subtitle.component';
 import TextComponent from '../../components/text.component';
 import {Gender} from '../../contexts/user.context';
+import {createTopicMutation} from '../../graphql/topic/mutations.topic.graphql';
+import {Operation} from '../../graphql/topic/types.topic.graphql';
 import {RootState} from '../../store/store';
 
 const HomeScreen = ({navigation}: any) => {
@@ -27,6 +31,20 @@ const HomeScreen = ({navigation}: any) => {
     const birthday = dayjs(user.birthday, 'DD/MM/YYYY');
     const age = dayjs().diff(birthday, 'year');
     return age + ' años';
+  };
+  const registerTopicsToTalk = async () => {
+    console.info('Register topics to talk');
+    try {
+      await API.graphql<GraphQLQuery<Operation>>(
+        createTopicMutation({
+          topicsToTalk: user.topicsToTalk ?? [],
+        }),
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      navigation.navigate('TopicsToListen');
+    }
   };
 
   return (
@@ -62,13 +80,12 @@ const HomeScreen = ({navigation}: any) => {
       <ListOfElementsComponent
         styles={{}}
         elements={user.topicsToTalk as string[]}
+        prefix="#"
       />
       <ButtonComponent
         styles={styles.talkButton}
         text="Conversar"
-        onPress={() => {
-          navigation.navigate('TopicsToListen');
-        }}
+        onPress={registerTopicsToTalk}
       />
     </SafeAreaView>
   );

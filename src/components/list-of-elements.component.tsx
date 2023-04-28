@@ -10,6 +10,7 @@ import {
 interface ListOfElementsComponentProps {
   styles: Record<string, string | number>;
   elements: string[];
+  prefix?: string;
   removeElement?: (index: number) => void;
 }
 
@@ -22,7 +23,7 @@ const ListOfElementsComponent = (props: ListOfElementsComponentProps) => {
             return (
               <View key={element} style={styles.element}>
                 <Text key={element} style={styles.elementText}>
-                  {element}
+                  {(props.prefix ?? '') + element}
                 </Text>
                 <TouchableOpacity
                   style={styles.elementButton}
@@ -37,7 +38,7 @@ const ListOfElementsComponent = (props: ListOfElementsComponentProps) => {
             return (
               <View key={element} style={styles.elementView}>
                 <Text key={element} style={styles.elementText}>
-                  {element}
+                  {(props.prefix ?? '') + element}
                 </Text>
               </View>
             );

@@ -10,6 +10,7 @@ import {
 interface ListOfElementsBlockComponentProps {
   styles?: Record<string, string | number>;
   elements: string[];
+  prefix?: string;
   removeElement?: (element: string, index: number) => void;
 }
 
@@ -29,7 +30,7 @@ const ListOfElementsBlockComponent = (
               }}>
               <View key={element} style={styles.elementContainer}>
                 <Text key={element} style={styles.text}>
-                  {element}
+                  {(props.prefix ?? '') + element}
                 </Text>
               </View>
             </TouchableOpacity>

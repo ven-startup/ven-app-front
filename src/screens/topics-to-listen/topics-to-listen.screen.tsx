@@ -103,6 +103,7 @@ const TopicsToListenScreen = ({navigation}: any) => {
       <TimerComponent style={styles.timer} />
       <ListOfElementsBlockComponent
         elements={topicsToListen}
+        prefix="#"
         removeElement={removeElement}
       />
     </SafeAreaView>
