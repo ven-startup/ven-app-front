@@ -2,18 +2,22 @@ import {GraphQLQuery} from '@aws-amplify/api/lib-esm/types';
 import {API} from 'aws-amplify';
 import * as React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import ListOfElementsBlockComponent from '../../components/list-of-elements.block.component';
 import NavigationComponent from '../../components/navigation.component';
 import TimerComponent from '../../components/timer.component';
+import {onCreateRoomSubscription} from '../../graphql/room/subscriptions.room.graphql';
 import {listTopicsQuery} from '../../graphql/topic/query.topic.graphql';
-import {Operation} from '../../graphql/topic/types.topic.graphql';
-import {RootState} from '../../store/store';
 import {onCreateTopicSubscription} from '../../graphql/topic/subscriptions.topic.graphql';
+import {Operation} from '../../graphql/topic/types.topic.graphql';
+import {setApp} from '../../store/slices/app.slice';
+import {setRoom} from '../../store/slices/room.slice';
 import {User} from '../../store/slices/user.slice';
+import {RootState} from '../../store/store';
 
 const TopicsToListenScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
+  const dispatch = useDispatch();
   const [topicsToListen, setTopicsToListen] = React.useState<string[]>([]);
 
   const getTopicsToListen = async () => {
@@ -90,6 +94,29 @@ const TopicsToListenScreen = ({navigation}: any) => {
     });
     return () => {
       console.info('Init process of unsubscribe onCreateTopicSubscription');
+      return subscription.unsubscribe();
+    };
+  }, []);
+
+  // Subscribe onCreateRoomSubscription
+  React.useEffect(() => {
+    const subscription = API.graphql<GraphQLQuery<Operation>>(
+      onCreateRoomSubscription(),
+    ).subscribe({
+      next: ({value}: any) => {
+        console.info('New Room', value?.data?.onCreateRoom);
+        dispatch(setApp({isLoading: true}));
+        dispatch(setRoom({...value?.data?.onCreateRoom}));
+        navigation.navigate('Room');
+        dispatch(setApp({isLoading: false}));
+      },
+      error: (error: any) => {
+        dispatch(setApp({isLoading: false}));
+        console.error(error);
+      },
+    });
+    return () => {
+      console.info('Init process of unsubscribe onCreateRoomSubscription');
       return subscription.unsubscribe();
     };
   }, []);

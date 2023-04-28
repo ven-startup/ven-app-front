@@ -1,8 +1,12 @@
-import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
+import {createSlice} from '@reduxjs/toolkit';
 
-export interface User {
+export interface Room {
   user?: string;
+  friend?: Friend;
+}
+
+export interface Friend {
   nickname?: string;
   birthday?: string;
   gender?: Gender | string;
@@ -19,29 +23,32 @@ export enum Gender {
 const initialState = {
   value: {
     user: '',
-    nickname: '',
-    birthday: '',
-    gender: '',
-    topicsToTalk: [],
-    topicsToListen: [],
-    host: '',
-  } as User,
+    friend: {
+      user: '',
+      nickname: '',
+      birthday: '',
+      gender: '',
+      topicsToTalk: [],
+      topicsToListen: [],
+      host: '',
+    } as Friend,
+  },
 };
 
-export const userSlice = createSlice({
-  name: 'user',
+export const roomSlice = createSlice({
+  name: 'room',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User>) => {
+    setRoom: (state, action: PayloadAction<Room>) => {
       state.value = {...state.value, ...action.payload};
     },
-    cleanUser: state => {
+    cleanRoom: state => {
       state.value = {...initialState.value};
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const {setUser, cleanUser} = userSlice.actions;
+export const {setRoom, cleanRoom} = roomSlice.actions;
 
-export default userSlice.reducer;
+export default roomSlice.reducer;
