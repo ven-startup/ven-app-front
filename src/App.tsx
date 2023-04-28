@@ -9,6 +9,7 @@ import HomeScreen from './screens/home/home.screen';
 import LoginScreen from './screens/login/login.screen';
 import MyDataScreen from './screens/my-data/my-data.screen';
 import NicknameScreen from './screens/nickname/nickname.screen';
+import RoomScreen from './screens/room/room.screen';
 import TopicsToListenScreen from './screens/topics-to-listen/topics-to-listen.screen';
 import TopicsToTalkScreen from './screens/topics-to-talk/topics-to-talk.screen';
 import {store} from './store/store';
@@ -30,6 +31,7 @@ const App = () => {
         <Stack.Screen name="TopicsToTalk" component={TopicsToTalkScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="TopicsToListen" component={TopicsToListenScreen} />
+        <Stack.Screen name="Room" component={RoomScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
