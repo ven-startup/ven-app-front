@@ -90,7 +90,7 @@ const NicknameScreen = ({navigation, route}: any) => {
         style={styles.navigation}
       />
       {isUpdateFlow ? (
-        <View style={{height: 52}} />
+        <View style={styles.spaceVertical} />
       ) : (
         <StepComponent total={3} actualStep={1} style={styles.step} />
       )}
@@ -120,6 +120,9 @@ const styles = StyleSheet.create({
   },
   navigation: {
     marginBottom: 12,
+  },
+  spaceVertical: {
+    height: 52,
   },
   step: {
     marginBottom: 27,
