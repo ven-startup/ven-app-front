@@ -13,11 +13,21 @@ import RoomScreen from './screens/room/room.screen';
 import TopicsToListenScreen from './screens/topics-to-listen/topics-to-listen.screen';
 import TopicsToTalkScreen from './screens/topics-to-talk/topics-to-talk.screen';
 import {store} from './store/store';
+import {BackHandler} from 'react-native';
 
 Amplify.configure(amplifyConfiguration);
 const Stack = createNativeStackNavigator();
 
 const App = () => {
+  const handleBackButton = () => {
+    return true;
+  };
+  React.useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', handleBackButton);
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', handleBackButton);
+    };
+  }, []);
   return (
     <NavigationContainer>
       <Stack.Navigator
