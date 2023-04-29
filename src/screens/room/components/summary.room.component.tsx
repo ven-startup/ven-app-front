@@ -45,16 +45,17 @@ export default SummaryRoomComponent;
 const styles = StyleSheet.create({
   summaryContainer: {
     flexDirection: 'row',
-    paddingBottom: 5,
+    height: 55,
     shadowColor: 'red',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.5,
     borderBottomWidth: 0.3,
     overflow: 'hidden',
+    padding: 10,
   },
   friendPersonalDataContainer: {
     width: '40%',
-    padding: 10,
+    paddingRight: 5,
   },
   nickname: {
     fontSize: 20,
@@ -63,7 +64,5 @@ const styles = StyleSheet.create({
   topicsToTalk: {fontSize: 15},
   topicsToTalkContainer: {
     width: '60%',
-    padding: 10,
-    paddingLeft: 0,
   },
 });
