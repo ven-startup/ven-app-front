@@ -90,14 +90,11 @@ export const roomSlice = createSlice({
       };
     },
     cleanRoom: state => {
-      console.warn('clean 1');
+      console.info('clean state of room');
       state.value.webRTC.remoteMediaStream.getTracks().map(track => {
         state.value.webRTC.remoteMediaStream.removeTrack(track);
       });
-      console.warn('clean 2');
       state.value.webRTC.rtcPeerConnection.close();
-
-      console.warn('clean 3');
       state.value = {
         ...initialState.value,
         webRTC: {
@@ -109,7 +106,6 @@ export const roomSlice = createSlice({
           localMediaStream: null,
         },
       };
-      console.warn('clean 4');
     },
   },
 });

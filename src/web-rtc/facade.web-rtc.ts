@@ -1,10 +1,10 @@
+import InCallManager from 'react-native-incall-manager';
 import {
   MediaStream,
   RTCPeerConnection,
   RTCSessionDescription,
   mediaDevices,
 } from 'react-native-webrtc';
-
 class FacadeWebRTC {
   createPeerConnection(): RTCPeerConnection {
     console.info('Create PeerConnection');
@@ -108,15 +108,8 @@ class FacadeWebRTC {
     }
   }
 
-  async toggleSpeaker(mediaStream: MediaStream): Promise<void> {
-    if (mediaStream) {
-      const tracks = await mediaStream.getAudioTracks();
-      if (tracks) {
-        tracks.forEach(track => {
-          console.warn('toggleSpeaker', track);
-        });
-      }
-    }
+  async toggleSpeaker(isEnabledSpeaker: boolean): Promise<void> {
+    InCallManager.setForceSpeakerphoneOn(isEnabledSpeaker);
   }
 
   private createConfigurationForLocalMediaStream() {

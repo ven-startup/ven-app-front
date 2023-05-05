@@ -17,18 +17,17 @@ import TextComponent from '../../components/text.component';
 const WaitingRoomScreen = ({navigation, route}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
   const room = useSelector((state: RootState) => state.room.value);
-  const iceCandidates: string[] = [];
-  const dispatch = useDispatch();
-
-  const messages = [
+  const [messages] = React.useState([
     'Disfruta de la conversación y diviértete siendo tú mismo/a.',
     'Sé auténtico/a y habla con sinceridad.',
     'Escucha activamente y muestra interés en lo que la otra persona tiene que decir.',
     'Habla con respeto y consideración hacia la otra persona.',
     'Mantén una actitud abierta y dispuesta a aprender de la otra persona.',
-  ];
-
+  ]);
   const [message, setMessage] = React.useState(messages[0]);
+
+  const iceCandidates: string[] = [];
+  const dispatch = useDispatch();
 
   const backToHome = () => {
     dispatch(setApp({isLoading: false}));
@@ -44,7 +43,7 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
     room.webRTC.rtcPeerConnection.addEventListener(
       'negotiationneeded',
       event => {
-        console.warn('Web RTC negotiationneeded', event);
+        console.info('Web RTC negotiationneeded', event);
         if (
           room.order === Order.FIRST_USER &&
           !room.webRTC.rtcPeerConnection.localDescription &&
@@ -74,7 +73,7 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
                 }),
               )
                 .then(() => {
-                  console.warn(
+                  console.info(
                     'Web RTC negotiationneeded offer successfully sent to friend',
                   );
                 })
@@ -116,7 +115,7 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
                 }),
               )
                 .then(() => {
-                  console.warn(
+                  console.info(
                     'Web RTC negotiationneeded answer successfully sent to friend',
                   );
                 })
@@ -133,9 +132,8 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
     room.webRTC.rtcPeerConnection.addEventListener(
       'icecandidate',
       (event: any) => {
-        console.warn('Web RTC icecandidate');
+        console.info('Web RTC icecandidate');
         if (!event?.candidate) {
-          console.warn('Web RTC icecandidate');
           API.graphql<GraphQLQuery<Operation>>(
             createRoomMutation({
               user: room?.friend?.user as string,
@@ -155,7 +153,7 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
             }),
           )
             .then(() => {
-              console.warn('Web RTC icecandidate successfully sent to friend');
+              console.info('Web RTC icecandidate successfully sent to friend');
             })
             .catch(error => {
               console.error(error);
@@ -166,20 +164,19 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
       },
     );
     room.webRTC.rtcPeerConnection.addEventListener('track', (event: any) => {
-      console.warn('Web RTC track', event);
+      console.info('Web RTC track');
       room.webRTC.remoteMediaStream.addTrack(event.track);
     });
     room.webRTC.rtcPeerConnection.addEventListener(
       'iceconnectionstatechange',
-      event => {
-        console.warn('Web RTC iceconnectionstatechange - event', event);
-        console.warn(
-          'Web RTC iceconnectionstatechange - ',
+      () => {
+        console.info(
+          'Web RTC iceconnectionstatechange',
           room.webRTC.rtcPeerConnection.iceConnectionState,
         );
         switch (room.webRTC.rtcPeerConnection.iceConnectionState) {
           case 'connected':
-            console.warn('Web RTC iceconnectionstatechange');
+            console.info('Web RTC iceconnectionstatechange');
             if (route.name !== 'Room') {
               dispatch(setApp({isLoading: true}));
               navigation.navigate('Room');
@@ -190,31 +187,6 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
             break;
           case 'disconnected':
             backToHome();
-            break;
-        }
-      },
-    );
-    room.webRTC.rtcPeerConnection.addEventListener(
-      'signalingstatechange',
-      event => {
-        console.warn('Web RTC signalingstatechange', event);
-        switch (room.webRTC.rtcPeerConnection.signalingState) {
-          case 'closed':
-            clean();
-            break;
-        }
-      },
-    );
-    room.webRTC.rtcPeerConnection.addEventListener(
-      'signalingstatechange',
-      event => {
-        console.warn(
-          'Web RTC signalingstatechange ',
-          room.webRTC.rtcPeerConnection.signalingState,
-        );
-        switch (room.webRTC.rtcPeerConnection.signalingState) {
-          case 'closed':
-            console.warn('Web RTC signalingstatechange');
             break;
         }
       },

@@ -41,10 +41,10 @@ export const validatedAuthenticated = (
       }
     })
     .catch(() => {
-      console.warn('ValidatedAuthenticated Failed');
-      console.warn('Current Screen', route.name);
+      console.info('ValidatedAuthenticated Failed');
+      console.info('Current Screen', route.name);
       dispatch(cleanUser());
-      console.warn('Destinity Screen Login');
+      console.info('Destinity Screen Login');
       navigation.navigate('Login');
     })
     .finally(() => {

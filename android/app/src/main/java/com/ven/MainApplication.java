@@ -11,6 +11,8 @@ import com.facebook.soloader.SoLoader;
 import java.util.List;
 // Additional config for react-native-config
 import com.lugg.RNCConfig.RNCConfigPackage;
+// Additional config for react-native-incall-manager
+import com.zxcpoiu.incallmanager.InCallManagerPackage;
 
 public class MainApplication extends Application implements ReactApplication {
 

@@ -22,7 +22,6 @@ import {RootState} from '../../store/store';
 const TopicsToTalkScreen = ({navigation, route}: any) => {
   React.useEffect(() => {
     setTimeout(() => {
-      console.warn('change isLoading to false');
       dispatch(setApp({isLoading: false}));
     }, 0);
   }, [navigation]);

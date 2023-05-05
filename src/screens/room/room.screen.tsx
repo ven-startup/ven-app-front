@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {StyleSheet, View} from 'react-native';
+import InCallManager from 'react-native-incall-manager';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {MediaStream, RTCView} from 'react-native-webrtc';
 import {useDispatch, useSelector} from 'react-redux';
@@ -32,6 +33,15 @@ const RoomScreen = ({navigation}: any) => {
       dispatch(cleanRoom());
     }, 0);
   };
+
+  // Configure Controll for call
+  React.useEffect(() => {
+    InCallManager.start({media: 'audio'});
+    const timer = setTimeout(() => {
+      InCallManager.setForceSpeakerphoneOn(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <SafeAreaView style={styles.roomContainer}>
       <View style={styles.summaryContainer}>
@@ -55,10 +65,8 @@ const RoomScreen = ({navigation}: any) => {
           }
           icon={speaker}
           onPress={() => {
+            facadeWebRtc.toggleSpeaker(!isEnabledSpeaker);
             setIsEnabledSpeaker(!isEnabledSpeaker);
-            facadeWebRtc.toggleSpeaker(
-              room?.webRTC?.localMediaStream as MediaStream,
-            );
           }}
         />
         <FloatButtonComponent
@@ -106,6 +114,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   speakerEnabled: {
+    backgroundColor: '#808080',
+    opacity: 0.5,
+    position: 'absolute',
+    bottom: 25,
+    left: 25,
+    elevation: 5,
+  },
+  speakerDisabled: {
     backgroundColor: 'white',
     opacity: 0.5,
     borderWidth: 1,
@@ -113,14 +129,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 25,
     left: 25,
-  },
-  speakerDisabled: {
-    backgroundColor: '#808080',
-    opacity: 0.5,
-    position: 'absolute',
-    bottom: 25,
-    left: 25,
-    elevation: 5,
   },
   microphoneEnabled: {
     backgroundColor: 'white',
