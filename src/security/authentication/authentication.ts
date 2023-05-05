@@ -49,6 +49,8 @@ export const validatedAuthenticated = (
     })
     .finally(() => {
       console.info('Finished Validated Authenticated');
-      dispatch(setApp({isLoading: false}));
+      setTimeout(() => {
+        dispatch(setApp({isLoading: false}));
+      }, 0);
     });
 };

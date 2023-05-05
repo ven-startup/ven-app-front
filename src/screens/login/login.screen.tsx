@@ -26,7 +26,7 @@ const LoginScreen = ({navigation, route}: any) => {
       }
     });
     return listener;
-  }, [dispatch, navigation, route]);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

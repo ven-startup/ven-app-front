@@ -17,6 +17,7 @@ import {RootState} from '../../store/store';
 
 const TopicsToListenScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
+  const room = useSelector((state: RootState) => state.room.value);
   const dispatch = useDispatch();
   const [topicsToListen, setTopicsToListen] = React.useState<string[]>([]);
 
@@ -47,7 +48,11 @@ const TopicsToListenScreen = ({navigation}: any) => {
     return newTopics;
   };
   const onPressBackButton = () => {
-    navigation.goBack();
+    dispatch(setApp({isLoading: true}));
+    navigation.navigate('Home');
+    setTimeout(() => {
+      dispatch(setApp({isLoading: false}));
+    }, 0);
   };
 
   const removeElement = async (topic: string, index: number) => {
@@ -56,13 +61,19 @@ const TopicsToListenScreen = ({navigation}: any) => {
     newTopicsToListen.splice(index, 1);
     setTopicsToListen(newTopicsToListen);
     try {
-      const response = await fetch('https://ven.mocklab.io/match', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        'http://deploy1.eba-znhra8e5.us-west-2.elasticbeanstalk.com/process',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...user,
+            topicsToListen: [topic],
+          } as User),
         },
-        body: JSON.stringify({...user, topicsToListen: [topic]} as User),
-      });
+      );
       console.info('Response for Match API', await response.json());
     } catch (error) {
       console.error(error);
@@ -81,7 +92,10 @@ const TopicsToListenScreen = ({navigation}: any) => {
       onCreateTopicSubscription(),
     ).subscribe({
       next: ({value}: any) => {
-        console.info('New Topics', value?.data?.onCreateTopic?.topicsToTalk);
+        console.info(
+          'New Topic to Listen',
+          value?.data?.onCreateTopic?.topicsToTalk,
+        );
         setTopicsToListen(currentTopicsToListen => {
           return removeRepeatTopic([
             ...value?.data?.onCreateTopic?.topicsToTalk,
@@ -104,11 +118,21 @@ const TopicsToListenScreen = ({navigation}: any) => {
       onCreateRoomSubscription(),
     ).subscribe({
       next: ({value}: any) => {
-        console.info('New Room', value?.data?.onCreateRoom);
+        console.info('New Match', value?.data?.onCreateRoom);
         dispatch(setApp({isLoading: true}));
-        dispatch(setRoom({...value?.data?.onCreateRoom}));
-        navigation.navigate('Room');
-        dispatch(setApp({isLoading: false}));
+        dispatch(
+          setRoom({
+            ...room,
+            user: value?.data?.onCreateRoom?.user,
+            friend: value?.data?.onCreateRoom?.friend,
+            order: value?.data?.onCreateRoom?.order,
+          }),
+        );
+        subscription.unsubscribe();
+        navigation.navigate('WaitingRoom');
+        setTimeout(() => {
+          dispatch(setApp({isLoading: false}));
+        }, 0);
       },
       error: (error: any) => {
         dispatch(setApp({isLoading: false}));

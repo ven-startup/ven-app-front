@@ -9,6 +9,24 @@ export const store = configureStore({
     user: userSlice,
     room: roomSlice,
   },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // Ignore these action types
+        // ignoredActions: ['your/action/type'],
+        // Ignore these field paths in all actions
+        ignoredActionPaths: [
+          'payload.webRTC.rtcPeerConnection',
+          'payload.webRTC.remoteMediaStream',
+        ],
+        // Ignore these paths in the state
+        ignoredPaths: [
+          'room.value.webRTC.rtcPeerConnection',
+          'room.value.webRTC.localMediaStream',
+          'room.value.webRTC.remoteMediaStream',
+        ],
+      },
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
