@@ -2,6 +2,13 @@ import * as React from 'react';
 import {StyleSheet} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {launchCamera} from 'react-native-image-picker';
+import {
+  PERMISSIONS,
+  RESULTS,
+  check,
+  openSettings,
+  request,
+} from 'react-native-permissions';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import ErrorComponent from '../../components/error.component';
@@ -41,6 +48,7 @@ const AvatarScreen = ({navigation}: any) => {
   const takePhoto = async () => {
     console.info('Take Photo');
     try {
+      await validatePermissionsCamera();
       dispatch(setApp({isLoading: true}));
       const photo = await launchCamera({
         mediaType: 'photo',
@@ -49,8 +57,11 @@ const AvatarScreen = ({navigation}: any) => {
         includeBase64: true,
         includeExtra: false,
       });
-      if (!photo.didCancel) {
+      if (photo?.assets?.[0]?.base64) {
         await sendPictureToAPI(photo?.assets?.[0].base64 as string);
+      } else if (photo.errorCode) {
+        setErrorMessage('Necesitamos permisos a tu camara!');
+        openSettings().catch(() => console.error('Cannot open settings'));
       }
     } catch (error) {
       setErrorMessage(
@@ -59,6 +70,13 @@ const AvatarScreen = ({navigation}: any) => {
       console.error(error);
     } finally {
       dispatch(setApp({isLoading: false}));
+    }
+  };
+
+  const validatePermissionsCamera = async () => {
+    const result = await check(PERMISSIONS.ANDROID.CAMERA);
+    if (result !== RESULTS.GRANTED) {
+      await request(PERMISSIONS.ANDROID.CAMERA);
     }
   };
 
@@ -82,6 +100,9 @@ const AvatarScreen = ({navigation}: any) => {
     );
   };
 
+  React.useEffect(() => {
+    validatePermissionsCamera();
+  }, []);
   return (
     <SafeAreaView style={styles.myDataContainer}>
       <NavigationComponent
