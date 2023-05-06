@@ -7,10 +7,14 @@ export const onCreateRoomSubscription = () => {
     subscription OnCreateRoomSubscription {
       onCreateRoom {
         user
+        order
         friend {
+          user
           birthday
           gender
-          host
+          offer
+          answer
+          iceCandidates
           nickname
           topicsToListen
           topicsToTalk

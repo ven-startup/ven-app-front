@@ -20,6 +20,11 @@ import {setUser} from '../../store/slices/user.slice';
 import {RootState} from '../../store/store';
 
 const TopicsToTalkScreen = ({navigation, route}: any) => {
+  React.useEffect(() => {
+    setTimeout(() => {
+      dispatch(setApp({isLoading: false}));
+    }, 0);
+  }, [navigation]);
   const user = useSelector((state: RootState) => state.user.value);
   const dispatch = useDispatch();
 

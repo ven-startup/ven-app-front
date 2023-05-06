@@ -2,14 +2,12 @@ import * as React from 'react';
 import {
   Image,
   ImageSourcePropType,
-  StyleProp,
   StyleSheet,
   TouchableOpacity,
-  ViewStyle,
 } from 'react-native';
 
 interface FloatButtonComponentProps {
-  styles?: StyleProp<ViewStyle>;
+  styles?: Record<string, string | number>;
   icon: ImageSourcePropType;
   onPress?: () => any;
 }
@@ -18,7 +16,7 @@ const FloatButtonComponent = (props: FloatButtonComponentProps) => {
   return (
     <TouchableOpacity
       onPress={props.onPress}
-      style={styles.floatButtonContainer}>
+      style={{...styles.floatButtonContainer, ...props.styles}}>
       <Image source={props.icon} style={styles.icon} />
     </TouchableOpacity>
   );
@@ -33,11 +31,6 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FF0000',
-    position: 'absolute',
-    bottom: 10,
-    elevation: 5,
-    alignSelf: 'center',
   },
   icon: {
     height: 24,

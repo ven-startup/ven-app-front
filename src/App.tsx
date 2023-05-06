@@ -2,6 +2,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Amplify} from 'aws-amplify';
 import * as React from 'react';
+import {BackHandler} from 'react-native';
 import {Provider} from 'react-redux';
 import amplifyConfiguration from '../amplify.config';
 import LoadingComponent from './components/loading.component';
@@ -12,8 +13,8 @@ import NicknameScreen from './screens/nickname/nickname.screen';
 import RoomScreen from './screens/room/room.screen';
 import TopicsToListenScreen from './screens/topics-to-listen/topics-to-listen.screen';
 import TopicsToTalkScreen from './screens/topics-to-talk/topics-to-talk.screen';
+import WaitingRoomScreen from './screens/waiting-room/waiting-room.screen';
 import {store} from './store/store';
-import {BackHandler} from 'react-native';
 
 Amplify.configure(amplifyConfiguration);
 const Stack = createNativeStackNavigator();
@@ -41,6 +42,7 @@ const App = () => {
         <Stack.Screen name="TopicsToTalk" component={TopicsToTalkScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="TopicsToListen" component={TopicsToListenScreen} />
+        <Stack.Screen name="WaitingRoom" component={WaitingRoomScreen} />
         <Stack.Screen name="Room" component={RoomScreen} />
       </Stack.Navigator>
     </NavigationContainer>

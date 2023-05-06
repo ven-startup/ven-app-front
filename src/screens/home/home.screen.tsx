@@ -6,7 +6,7 @@ import customParseFormat from 'dayjs/plugin/customParseFormat';
 import * as React from 'react';
 import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import edit from '../../../assets/images/edit.png';
 import female from '../../../assets/images/female.png';
 import male from '../../../assets/images/male.png';
@@ -18,10 +18,12 @@ import TextComponent from '../../components/text.component';
 import {Gender} from '../../contexts/user.context';
 import {createTopicMutation} from '../../graphql/topic/mutations.topic.graphql';
 import {Operation} from '../../graphql/topic/types.topic.graphql';
+import {setApp} from '../../store/slices/app.slice';
 import {RootState} from '../../store/store';
 
 const HomeScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
+  const dispatch = useDispatch();
 
   const validatedAvatarForGender = () => {
     return user.gender === Gender.MALE ? male : female;
@@ -43,10 +45,13 @@ const HomeScreen = ({navigation}: any) => {
     } catch (error) {
       console.error(error);
     } finally {
+      dispatch(setApp({isLoading: true}));
       navigation.navigate('TopicsToListen');
+      setTimeout(() => {
+        dispatch(setApp({isLoading: false}));
+      }, 0);
     }
   };
-
   return (
     <SafeAreaView style={styles.homeContainer}>
       <View style={styles.offButtonContainer}>

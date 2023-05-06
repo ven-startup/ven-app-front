@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Text, View, StyleSheet, TouchableHighlight} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 
 interface ButtonComponentProps {
   styles?: Record<string, string | number>;
@@ -9,11 +9,9 @@ interface ButtonComponentProps {
 
 const ButtonComponent = (props: ButtonComponentProps) => {
   return (
-    <TouchableHighlight onPress={props.onPress}>
-      <View style={styles.buttonContainer}>
-        <Text style={{...styles.text, ...props.styles}}>{props.text}</Text>
-      </View>
-    </TouchableHighlight>
+    <TouchableOpacity onPress={props.onPress} style={styles.buttonContainer}>
+      <Text style={{...styles.text, ...props.styles}}>{props.text}</Text>
+    </TouchableOpacity>
   );
 };
 
