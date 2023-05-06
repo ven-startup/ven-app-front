@@ -14,6 +14,7 @@ import {setApp} from '../../store/slices/app.slice';
 import {setRoom} from '../../store/slices/room.slice';
 import {User} from '../../store/slices/user.slice';
 import {RootState} from '../../store/store';
+import {API_MATCH} from '../../utils/constants.util';
 
 const TopicsToListenScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
@@ -61,19 +62,16 @@ const TopicsToListenScreen = ({navigation}: any) => {
     newTopicsToListen.splice(index, 1);
     setTopicsToListen(newTopicsToListen);
     try {
-      const response = await fetch(
-        'http://deploy1.eba-znhra8e5.us-west-2.elasticbeanstalk.com/process',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...user,
-            topicsToListen: [topic],
-          } as User),
+      const response = await fetch(API_MATCH as string, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          ...user,
+          topicsToListen: [topic],
+        } as User),
+      });
       console.info('Response for Match API', await response.json());
     } catch (error) {
       console.error(error);

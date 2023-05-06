@@ -1,15 +1,14 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import * as React from 'react';
-import {Image, StyleSheet, View} from 'react-native';
-import female from '../../../../assets/images/female.png';
-import male from '../../../../assets/images/male.png';
+import {StyleSheet, View} from 'react-native';
+import FastImage from 'react-native-fast-image';
 import ListOfElementsComponent from '../../../components/list-of-elements.component';
 import NavigationComponent from '../../../components/navigation.component';
 import SubtitleComponent from '../../../components/subtitle.component';
 import TextComponent from '../../../components/text.component';
 import {Room} from '../../../store/slices/room.slice';
-import {Gender} from '../../../store/slices/user.slice';
+import {URL_AVATAR_IMAGE} from '../../../utils/constants.util';
 
 interface DetailRoomComponentProps {
   style?: {};
@@ -18,9 +17,6 @@ interface DetailRoomComponentProps {
 }
 
 const DetailRoomComponent = (props: DetailRoomComponentProps) => {
-  const validatedAvatarForGender = () => {
-    return props?.room?.friend?.gender === Gender.MALE ? male : female;
-  };
   const calculateYear = () => {
     dayjs.extend(customParseFormat);
     const birthday = dayjs(props?.room?.friend?.birthday, 'DD/MM/YYYY');
@@ -34,7 +30,14 @@ const DetailRoomComponent = (props: DetailRoomComponentProps) => {
           style={styles.navigation}
           onPressBackButton={props.onPressBackButton}
         />
-        <Image style={styles.avatar} source={validatedAvatarForGender()} />
+        <FastImage
+          style={styles.avatar}
+          source={{
+            uri: `${URL_AVATAR_IMAGE}${props?.room?.friend?.user}.png`,
+            priority: FastImage.priority.normal,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+        />
         <SubtitleComponent
           style={styles.nickname}
           text={props?.room?.friend?.nickname}
@@ -83,6 +86,8 @@ const styles = StyleSheet.create({
     height: 32,
   },
   avatar: {
+    width: 100,
+    height: 100,
     alignSelf: 'center',
     marginBottom: 5,
   },

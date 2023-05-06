@@ -157,7 +157,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
       {isUpdateFlow ? (
         <View style={styles.spaceVertical} />
       ) : (
-        <StepComponent total={3} actualStep={3} style={styles.step} />
+        <StepComponent total={4} actualStep={4} style={styles.step} />
       )}
       <TitleComponent text="¿De que puedo hablar?" style={styles.title} />
       <SubtitleComponent

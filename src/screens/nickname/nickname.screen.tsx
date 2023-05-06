@@ -92,7 +92,7 @@ const NicknameScreen = ({navigation, route}: any) => {
       {isUpdateFlow ? (
         <View style={styles.spaceVertical} />
       ) : (
-        <StepComponent total={3} actualStep={1} style={styles.step} />
+        <StepComponent total={4} actualStep={1} style={styles.step} />
       )}
       <TitleComponent text="Nickname" style={styles.title} />
       <SubtitleComponent

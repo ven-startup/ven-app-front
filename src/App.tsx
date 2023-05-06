@@ -15,6 +15,7 @@ import TopicsToListenScreen from './screens/topics-to-listen/topics-to-listen.sc
 import TopicsToTalkScreen from './screens/topics-to-talk/topics-to-talk.screen';
 import WaitingRoomScreen from './screens/waiting-room/waiting-room.screen';
 import {store} from './store/store';
+import AvatarScreen from './screens/avatar/avatar.screen';
 
 Amplify.configure(amplifyConfiguration);
 const Stack = createNativeStackNavigator();
@@ -39,6 +40,7 @@ const App = () => {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Nickname" component={NicknameScreen} />
         <Stack.Screen name="MyData" component={MyDataScreen} />
+        <Stack.Screen name="Avatar" component={AvatarScreen} />
         <Stack.Screen name="TopicsToTalk" component={TopicsToTalkScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="TopicsToListen" component={TopicsToListenScreen} />
