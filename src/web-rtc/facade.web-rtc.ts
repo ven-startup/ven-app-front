@@ -113,23 +113,23 @@ class FacadeWebRTC {
     InCallManager.setForceSpeakerphoneOn(isEnabledSpeaker);
   }
 
-  monitorRemoteAudioLevels(
+  async monitorRemoteAudioLevels(
     peerConnection: RTCPeerConnection,
+    remoteMediaStream: MediaStream,
     onAudioLevelChange: (level: number) => void,
   ) {
-    setInterval(async () => {
-      console.log(peerConnection);
+    console.info('Monitor Remote Audio Level');
+    if (peerConnection && remoteMediaStream) {
       const stats = await peerConnection.getStats();
       const audioReceivers = Array.from(stats.values()).filter(
         stat => stat?.type === 'inbound-rtp' && stat?.mediaType === 'audio',
       );
-
       if (audioReceivers.length > 0) {
         const audioReceiver = audioReceivers[0];
         const audioLevel = audioReceiver?.audioLevel || 0;
         onAudioLevelChange(audioLevel);
       }
-    }, 1000);
+    }
   }
 
   private createConfigurationForLocalMediaStream() {

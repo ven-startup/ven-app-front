@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {StyleSheet} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {launchCamera} from 'react-native-image-picker';
 import {
@@ -11,6 +11,7 @@ import {
 } from 'react-native-permissions';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
+import faceRecognition from '../../../assets/images/face-recognition.png';
 import ErrorComponent from '../../components/error.component';
 import FloatButtonComponent from '../../components/float-button.component';
 import NavigationComponent from '../../components/navigation.component';
@@ -19,25 +20,22 @@ import SubtitleComponent from '../../components/subtitle.component';
 import TitleComponent from '../../components/title.component';
 import {setApp} from '../../store/slices/app.slice';
 import {RootState} from '../../store/store';
-import {
-  API_AVATAR,
-  URL_AVATAR_IMAGE,
-  URL_AVATAR_IMAGE_DEFAULT,
-} from '../../utils/constants.util';
+import avatarUtil from '../../utils/avatar.util';
+import {API_AVATAR} from '../../utils/constants.util';
+import remove from '../../../assets/images/remove.png';
 
 const AvatarScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
   const dispatch = useDispatch();
   // declared for camera
-  const [isGenerateAvatar, setIsGenerateAvatar] =
-    React.useState<boolean>(false);
+  const [uriAvatar, setUriAvatar] = React.useState<string | null>(null);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   const onPressBackButton = () => {
     navigation.navigate('MyData');
   };
   const onPressNextButton = () => {
-    if (isGenerateAvatar) {
+    if (uriAvatar) {
       navigation.navigate('TopicsToTalk');
     } else {
       setErrorMessage('Es necesario crear un nuevo avatar!');
@@ -47,18 +45,24 @@ const AvatarScreen = ({navigation}: any) => {
   // Functions for Photo
   const takePhoto = async () => {
     console.info('Take Photo');
+    setErrorMessage('');
     try {
       await validatePermissionsCamera();
       dispatch(setApp({isLoading: true}));
       const photo = await launchCamera({
         mediaType: 'photo',
         quality: 0.5,
-        cameraType: 'front',
+        cameraType: 'back',
         includeBase64: true,
         includeExtra: false,
       });
       if (photo?.assets?.[0]?.base64) {
         await sendPictureToAPI(photo?.assets?.[0].base64 as string);
+        setUriAvatar(
+          avatarUtil.generateAvatarImageUrlWithPreventCache(
+            user.user as string,
+          ),
+        );
       } else if (photo.errorCode) {
         setErrorMessage('Necesitamos permisos a tu camara!');
         openSettings().catch(() => console.error('Cannot open settings'));
@@ -94,10 +98,10 @@ const AvatarScreen = ({navigation}: any) => {
       throw new Error(`API request failed with status ${response.status}`);
     }
     await response.json();
-    setIsGenerateAvatar(true);
-    setErrorMessage(
-      'Ya tienes tu propio avatar tomate otra foto si lo necesitas!',
-    );
+  };
+
+  const removeAvatar = () => {
+    setUriAvatar(null);
   };
 
   React.useEffect(() => {
@@ -116,27 +120,31 @@ const AvatarScreen = ({navigation}: any) => {
         text="Tomate una foto para crear tu propio avatar!"
         style={styles.subtitle}
       />
-      {!isGenerateAvatar && (
+      {!uriAvatar && (
+        <TouchableOpacity
+          style={styles.faceRecognitionContainer}
+          onPress={takePhoto}>
+          <Image source={faceRecognition} style={styles.faceRecognition} />
+        </TouchableOpacity>
+      )}
+      {uriAvatar && (
         <FastImage
           style={styles.avatar}
           source={{
-            uri: `${URL_AVATAR_IMAGE_DEFAULT}${user.gender}.png`,
-            priority: FastImage.priority.normal,
+            uri: uriAvatar as string,
+            priority: FastImage.priority.high,
+            cache: FastImage.cacheControl.immutable,
           }}
           resizeMode={FastImage.resizeMode.contain}
         />
       )}
-      {isGenerateAvatar && (
-        <FastImage
-          style={styles.avatar}
-          source={{
-            uri: `${URL_AVATAR_IMAGE}${user.user}.png`,
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.contain}
+      {uriAvatar && (
+        <FloatButtonComponent
+          icon={remove}
+          styles={styles.remove}
+          onPress={removeAvatar}
         />
       )}
-      <FloatButtonComponent styles={styles.takePhoto} onPress={takePhoto} />
       <ErrorComponent text={errorMessage} />
     </SafeAreaView>
   );
@@ -162,9 +170,22 @@ const styles = StyleSheet.create({
   subtitle: {
     marginBottom: 0,
   },
-  avatar: {flex: 1, maxHeight: '45%', marginBottom: 27},
-  takePhoto: {
-    backgroundColor: '#FF0000',
+  faceRecognitionContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  faceRecognition: {
+    height: 100,
+    width: 100,
+  },
+  avatar: {
+    flex: 1,
+    marginBottom: 27,
+  },
+  remove: {
+    backgroundColor: 'white',
     position: 'absolute',
     bottom: 25,
     elevation: 5,

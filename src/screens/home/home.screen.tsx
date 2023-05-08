@@ -18,7 +18,7 @@ import {createTopicMutation} from '../../graphql/topic/mutations.topic.graphql';
 import {Operation} from '../../graphql/topic/types.topic.graphql';
 import {setApp} from '../../store/slices/app.slice';
 import {RootState} from '../../store/store';
-import {URL_AVATAR_IMAGE} from '../../utils/constants.util';
+import avatarUtil from '../../utils/avatar.util';
 
 const HomeScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
@@ -61,8 +61,11 @@ const HomeScreen = ({navigation}: any) => {
       <FastImage
         style={styles.avatar}
         source={{
-          uri: `${URL_AVATAR_IMAGE}${user.user}.png`,
-          priority: FastImage.priority.normal,
+          uri: avatarUtil.generateAvatarImageUrlWithPreventCache(
+            user.user as string,
+          ),
+          priority: FastImage.priority.high,
+          cache: FastImage.cacheControl.immutable,
         }}
         resizeMode={FastImage.resizeMode.contain}
       />

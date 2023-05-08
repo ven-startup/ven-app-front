@@ -12,7 +12,7 @@ import FloatButtonComponent from '../../components/float-button.component';
 import {setApp} from '../../store/slices/app.slice';
 import {cleanRoom} from '../../store/slices/room.slice';
 import {RootState} from '../../store/store';
-import {URL_AVATAR_GIF, URL_AVATAR_IMAGE} from '../../utils/constants.util';
+import avatarUtil from '../../utils/avatar.util';
 import facadeWebRtc from '../../web-rtc/facade.web-rtc';
 import DetailRoomComponent from './components/detail.room.component';
 import SummaryRoomComponent from './components/summary.room.component';
@@ -52,7 +52,16 @@ const RoomScreen = ({navigation}: any) => {
 
   // Configure Avatar
   React.useEffect(() => {
-    setAvatarURI(`${URL_AVATAR_IMAGE}${room?.friend?.user}.png`);
+    setAvatarURI(
+      avatarUtil.generateAvatarImageUrlWithPreventCache(
+        room?.friend?.user as string,
+      ),
+    );
+    setGifAvatarURI(
+      avatarUtil.generateAvatarGifUrlWithPreventCache(
+        room?.friend?.user as string,
+      ),
+    );
   }, []);
 
   // Configure Controll for call
@@ -69,21 +78,31 @@ const RoomScreen = ({navigation}: any) => {
     setIsTalking(remoteAudioLevel > 0.01);
   }, [remoteAudioLevel]);
 
-  // Configure Avatar GIF
-  React.useEffect(() => {
-    setGifAvatarURI(`${URL_AVATAR_GIF}${room?.friend?.user}.gif`);
-  }, []);
-
   //Check when audio level changes
   React.useEffect(() => {
-    if (room.webRTC.rtcPeerConnection && room.webRTC.remoteMediaStream) {
-      facadeWebRtc.monitorRemoteAudioLevels(
-        room.webRTC.rtcPeerConnection,
-        level => {
-          setRemoteAudioLevel(level);
-        },
-      );
-    }
+    let timerId: any = null;
+    let isMonitoring = false;
+    const monitorRemoteAudio = async () => {
+      if (!isMonitoring) {
+        isMonitoring = true;
+        try {
+          await facadeWebRtc.monitorRemoteAudioLevels(
+            room.webRTC.rtcPeerConnection,
+            room.webRTC.remoteMediaStream,
+            level => {
+              setRemoteAudioLevel(level);
+            },
+          );
+        } finally {
+          isMonitoring = false;
+          timerId = setTimeout(monitorRemoteAudio, 1000);
+        }
+      }
+    };
+    timerId = setTimeout(monitorRemoteAudio, 0);
+    return () => {
+      clearTimeout(timerId);
+    };
   }, []);
   return (
     <SafeAreaView style={styles.roomContainer}>
