@@ -18,13 +18,14 @@ import female from './../../../assets/images/female.png';
 import male from './../../../assets/images/male.png';
 import {setUser} from '../../store/slices/user.slice';
 import {RootState} from '../../store/store';
+import DialogComponent from '../../components/dialog.component';
 
 const MyDataScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
   const dispatch = useDispatch();
   // declared for birthday
   const [datePickerSelected, setDatePickerSelected] = React.useState(
-    dayjs().subtract(13, 'year').toDate(),
+    dayjs().subtract(18, 'year').toDate(),
   );
   const [birthday, setBirthday] = React.useState('');
   const [errorMessageBirthday, setErrorMessageBirthday] = React.useState('');
@@ -38,6 +39,9 @@ const MyDataScreen = ({navigation}: any) => {
   const [gender, setGender] = React.useState('');
   const [errorMessageGender, setErrorMessageGender] = React.useState('');
 
+  // declared for dialog
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+
   const onPressBackButton = () => {
     navigation.navigate('Nickname');
   };
@@ -46,7 +50,7 @@ const MyDataScreen = ({navigation}: any) => {
       user.birthday = birthday;
       user.gender = gender;
       dispatch(setUser(user));
-      navigation.navigate('Avatar');
+      setIsDialogOpen(true);
     }
   };
 
@@ -90,6 +94,15 @@ const MyDataScreen = ({navigation}: any) => {
     return validated;
   };
 
+  // Functions for dialog
+  const createDialog = () => {
+    return `Hola ${
+      user.nickname
+    }, registraste tu fecha de nacimiento el ${birthday} y el sexo ${
+      gender === Gender.MALE ? 'masculino' : 'femenino'
+    }. Recuerda que si finalizas tu registro no podrás editar ni tu fecha de nacimiento y genero pasado los 6 meses! `;
+  };
+
   return (
     <SafeAreaView style={styles.myDataContainer}>
       <NavigationComponent
@@ -100,7 +113,7 @@ const MyDataScreen = ({navigation}: any) => {
       <StepComponent total={4} actualStep={2} style={styles.step} />
       <TitleComponent text="Mis Datos" style={styles.title} />
       <SubtitleComponent
-        text="Estos datos no podrán ser modificados nunca.&#10;Revísalos bien!"
+        text="Estos datos no podrán ser modificados en 6 meses.&#10;Revísalos bien!"
         style={styles.subtitle}
       />
       <TextInputComponent
@@ -115,8 +128,8 @@ const MyDataScreen = ({navigation}: any) => {
         date={datePickerSelected}
         isVisible={isDatePickerVisible}
         mode="date"
-        minimumDate={dayjs().subtract(100, 'year').toDate()}
-        maximumDate={dayjs().subtract(13, 'year').toDate()}
+        minimumDate={dayjs().subtract(130, 'year').toDate()}
+        maximumDate={dayjs().subtract(18, 'year').toDate()}
         onConfirm={onChangeBirthday}
         onCancel={hideDatePicker}
       />
@@ -131,6 +144,18 @@ const MyDataScreen = ({navigation}: any) => {
         style={styles.selectedElementGender}
       />
       <ErrorComponent text={errorMessageGender} />
+      {isDialogOpen && (
+        <DialogComponent
+          cancelAction={() => {
+            setIsDialogOpen(false);
+          }}
+          acceptAction={() => {
+            navigation.navigate('Avatar');
+            setIsDialogOpen(false);
+          }}
+          message={createDialog()}
+        />
+      )}
     </SafeAreaView>
   );
 };

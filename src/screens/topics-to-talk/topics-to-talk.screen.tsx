@@ -62,7 +62,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
       }
       navigation.navigate('Home');
     } else {
-      navigation.navigate('MyData');
+      navigation.navigate('Avatar');
     }
   };
   const onPressNextButton = async () => {
