@@ -314,11 +314,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   activityIndicator: {
-    marginBottom: 12,
+    marginBottom: 5,
   },
   text: {
-    fontSize: 12,
+    fontSize: 10,
     textAlign: 'center',
-    marginBottom: 15,
+    marginBottom: 21,
   },
 });

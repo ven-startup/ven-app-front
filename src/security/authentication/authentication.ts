@@ -23,7 +23,7 @@ export const validatedAuthenticated = (
 ) => {
   console.info('Start Validated Authenticated');
   Auth.currentAuthenticatedUser()
-    .then(async () => {
+    .then(async userAuthenticate => {
       console.info('ValidatedAuthenticated Success');
       console.info('Current Screen', route.name);
       const response = await API.graphql<GraphQLQuery<Operation>>(
@@ -36,6 +36,7 @@ export const validatedAuthenticated = (
         console.info('Destinity Screen Home');
         navigation.navigate('Home');
       } else {
+        dispatch(setUser({user: userAuthenticate.username}));
         console.info('Destinity Screen Nickname');
         navigation.navigate('Nickname');
       }

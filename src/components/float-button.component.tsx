@@ -8,7 +8,7 @@ import {
 
 interface FloatButtonComponentProps {
   styles?: Record<string, string | number>;
-  icon: ImageSourcePropType;
+  icon?: ImageSourcePropType;
   onPress?: () => any;
 }
 
@@ -17,7 +17,7 @@ const FloatButtonComponent = (props: FloatButtonComponentProps) => {
     <TouchableOpacity
       onPress={props.onPress}
       style={{...styles.floatButtonContainer, ...props.styles}}>
-      <Image source={props.icon} style={styles.icon} />
+      {props.icon && <Image source={props.icon} style={styles.icon} />}
     </TouchableOpacity>
   );
 };

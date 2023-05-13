@@ -5,6 +5,7 @@ import {
   RTCSessionDescription,
   mediaDevices,
 } from 'react-native-webrtc';
+
 class FacadeWebRTC {
   createPeerConnection(): RTCPeerConnection {
     console.info('Create PeerConnection');
@@ -110,6 +111,25 @@ class FacadeWebRTC {
 
   async toggleSpeaker(isEnabledSpeaker: boolean): Promise<void> {
     InCallManager.setForceSpeakerphoneOn(isEnabledSpeaker);
+  }
+
+  async monitorRemoteAudioLevels(
+    peerConnection: RTCPeerConnection,
+    remoteMediaStream: MediaStream,
+    onAudioLevelChange: (level: number) => void,
+  ) {
+    console.info('Monitor Remote Audio Level');
+    if (peerConnection && remoteMediaStream) {
+      const stats = await peerConnection.getStats();
+      const audioReceivers = Array.from(stats.values()).filter(
+        stat => stat?.type === 'inbound-rtp' && stat?.mediaType === 'audio',
+      );
+      if (audioReceivers.length > 0) {
+        const audioReceiver = audioReceivers[0];
+        const audioLevel = audioReceiver?.audioLevel || 0;
+        onAudioLevelChange(audioLevel);
+      }
+    }
   }
 
   private createConfigurationForLocalMediaStream() {
