@@ -5,7 +5,7 @@ class AvatarUtil {
     return `${URL_AVATAR_IMAGE}${user}.png?time=${new Date().getTime()}`;
   }
   generateAvatarGifUrlWithPreventCache(user: string): string {
-    return `${URL_AVATAR_GIF}${user}.png?time=${new Date().getTime()}`;
+    return `${URL_AVATAR_GIF}${user}.gif?time=${new Date().getTime()}`;
   }
 }
 export default new AvatarUtil();
