@@ -24,6 +24,10 @@ const HomeScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
   const dispatch = useDispatch();
 
+  const [uriAvatar, setUriAvatar] = React.useState<string>(
+    avatarUtil.generateAvatarImageUrlWithPreventCache(user.user as string),
+  );
+
   const calculateYear = () => {
     dayjs.extend(customParseFormat);
     const birthday = dayjs(user.birthday, 'DD/MM/YYYY');
@@ -58,17 +62,23 @@ const HomeScreen = ({navigation}: any) => {
           <Image style={styles.offButton} source={off} />
         </TouchableOpacity>
       </View>
-      <FastImage
-        style={styles.avatar}
-        source={{
-          uri: avatarUtil.generateAvatarImageUrlWithPreventCache(
-            user.user as string,
-          ),
-          priority: FastImage.priority.high,
-          cache: FastImage.cacheControl.immutable,
-        }}
-        resizeMode={FastImage.resizeMode.contain}
-      />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('Avatar', {
+            isUpdateFlow: true,
+            setUriAvatar,
+          });
+        }}>
+        <FastImage
+          style={styles.avatar}
+          source={{
+            uri: uriAvatar,
+            priority: FastImage.priority.high,
+            cache: FastImage.cacheControl.immutable,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+      </TouchableOpacity>
       <SubtitleComponent
         style={styles.nickname}
         text={user.nickname}
