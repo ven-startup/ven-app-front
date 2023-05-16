@@ -80,7 +80,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
   };
   const clearTopicToTalk = (newTopicToTalk: string): string => {
     let cleanNewTopicToTalk = newTopicToTalk;
-    const alphanumericRegex = /[^a-zA-Z0-9]/g;
+    const alphanumericRegex = /[^a-zA-Z0-9áéíóúÁÉÍÓÚ]/g;
     if (
       cleanNewTopicToTalk !== '' &&
       alphanumericRegex.test(cleanNewTopicToTalk)
