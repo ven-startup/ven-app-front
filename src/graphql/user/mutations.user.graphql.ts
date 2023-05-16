@@ -16,6 +16,8 @@ export const createUserMutation = (createUserInput: CreateUserInput) => {
         gender
         birthday
         topicsToTalk
+        creationDate
+        personalInformationUpdateDate
       }
     }
   `;
