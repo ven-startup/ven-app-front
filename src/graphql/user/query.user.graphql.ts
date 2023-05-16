@@ -11,6 +11,8 @@ export const getUserQuery = () => {
         topicsToListen
         topicsToTalk
         user
+        creationDate
+        personalInformationUpdateDate
       }
     }
   `;

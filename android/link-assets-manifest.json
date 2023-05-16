@@ -2,6 +2,10 @@
   "migIndex": 1,
   "data": [
     {
+      "path": "assets/fonts/Arial-Rounded-MT-Bold.ttf",
+      "sha1": "e403f0d02c86a70e1eda62ef9386a0f2eee0f1d4"
+    },
+    {
       "path": "assets/fonts/Arial-Rounded-MT.ttf",
       "sha1": "1e8ef6d6b466e32cd0f8e7bb027cccd51bccdcca"
     }

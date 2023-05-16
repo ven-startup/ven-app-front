@@ -54,6 +54,7 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string>Arial-Rounded-MT.ttf</string>
+		<string>Arial-Rounded-MT-Bold.ttf</string>
 	</array>
 </dict>
 </plist>

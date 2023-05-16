@@ -24,3 +24,8 @@ export interface UpdateUserInput {
   topicsToTalk?: string[];
   topicsToListen?: string[];
 }
+
+export interface UpdateUserPersonalInformationInput {
+  birthday: string;
+  gender: string;
+}

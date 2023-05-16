@@ -1,3 +1,5 @@
+import {GraphQLQuery} from '@aws-amplify/api';
+import {API} from 'aws-amplify';
 import * as React from 'react';
 import {StyleSheet, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
@@ -9,6 +11,8 @@ import callEnd from '../../../assets/images/call-end.png';
 import microphone from '../../../assets/images/microphone.png';
 import speaker from '../../../assets/images/speaker.png';
 import FloatButtonComponent from '../../components/float-button.component';
+import {closeRoomMutation} from '../../graphql/room/mutations.room.graphql';
+import {Operation} from '../../graphql/room/types.room.graphql';
 import {setApp} from '../../store/slices/app.slice';
 import {cleanRoom} from '../../store/slices/room.slice';
 import {RootState} from '../../store/store';
@@ -41,13 +45,19 @@ const RoomScreen = ({navigation}: any) => {
     setIsShowDetail(false);
   };
 
-  const backToHome = () => {
-    dispatch(setApp({isLoading: false}));
-    navigation.navigate('Home');
-    setTimeout(() => {
-      dispatch(setApp({isLoading: false}));
-      dispatch(cleanRoom());
-    }, 0);
+  const backToHome = async () => {
+    try {
+      dispatch(setApp({isLoading: true}));
+      await API.graphql<GraphQLQuery<Operation>>(closeRoomMutation());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      navigation.navigate('Home');
+      setTimeout(() => {
+        dispatch(setApp({isLoading: false}));
+        dispatch(cleanRoom());
+      }, 0);
+    }
   };
 
   // Configure Avatar

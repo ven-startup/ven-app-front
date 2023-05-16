@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import edit from '../../../assets/images/edit.png';
 import off from '../../../assets/images/off.png';
 import ButtonComponent from '../../components/button.component';
+import DialogComponent from '../../components/dialog.component';
 import ListOfElementsComponent from '../../components/list-of-elements.component';
 import SubtitleComponent from '../../components/subtitle.component';
 import TextComponent from '../../components/text.component';
@@ -23,6 +24,13 @@ import avatarUtil from '../../utils/avatar.util';
 const HomeScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
   const dispatch = useDispatch();
+
+  const [uriAvatar, setUriAvatar] = React.useState<string>(
+    avatarUtil.generateAvatarImageUrlWithPreventCache(user.user as string),
+  );
+
+  // declared for dialog
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const calculateYear = () => {
     dayjs.extend(customParseFormat);
@@ -48,6 +56,15 @@ const HomeScreen = ({navigation}: any) => {
       }, 0);
     }
   };
+  // Functions for dialog
+  const createDialog = () => {
+    const allowDateForUpdate = dayjs(
+      new Date(user.personalInformationUpdateDate as string),
+    ).add(6, 'month');
+    const allowDateForUpdateWithFormat =
+      allowDateForUpdate.format('DD/MM/YYYY');
+    return `No podrás actualizar tus datos personales hasta el día ${allowDateForUpdateWithFormat}`;
+  };
   return (
     <SafeAreaView style={styles.homeContainer}>
       <View style={styles.offButtonContainer}>
@@ -58,17 +75,23 @@ const HomeScreen = ({navigation}: any) => {
           <Image style={styles.offButton} source={off} />
         </TouchableOpacity>
       </View>
-      <FastImage
-        style={styles.avatar}
-        source={{
-          uri: avatarUtil.generateAvatarImageUrlWithPreventCache(
-            user.user as string,
-          ),
-          priority: FastImage.priority.high,
-          cache: FastImage.cacheControl.immutable,
-        }}
-        resizeMode={FastImage.resizeMode.contain}
-      />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('Avatar', {
+            isUpdateFlow: true,
+            setUriAvatar,
+          });
+        }}>
+        <FastImage
+          style={styles.avatar}
+          source={{
+            uri: uriAvatar,
+            priority: FastImage.priority.high,
+            cache: FastImage.cacheControl.immutable,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+      </TouchableOpacity>
       <SubtitleComponent
         style={styles.nickname}
         text={user.nickname}
@@ -77,7 +100,22 @@ const HomeScreen = ({navigation}: any) => {
           navigation.navigate('Nickname', {isUpdateFlow: true});
         }}
       />
-      <TextComponent style={styles.age} text={calculateYear()} />
+      <TouchableOpacity
+        onPress={() => {
+          if (
+            dayjs(new Date(user.personalInformationUpdateDate as string))
+              .add(6, 'month')
+              .isBefore(dayjs())
+          ) {
+            navigation.navigate('MyData', {
+              isUpdateFlow: true,
+            });
+          } else {
+            setIsDialogOpen(true);
+          }
+        }}>
+        <TextComponent style={styles.age} text={calculateYear()} />
+      </TouchableOpacity>
       <View style={styles.topicsToTalkContainer}>
         <SubtitleComponent
           style={styles.topicsToTalkSubTitle}
@@ -98,6 +136,17 @@ const HomeScreen = ({navigation}: any) => {
         text="Conversar"
         onPress={registerTopicsToTalk}
       />
+      {isDialogOpen && (
+        <DialogComponent
+          cancelAction={() => {
+            setIsDialogOpen(false);
+          }}
+          acceptAction={async () => {
+            setIsDialogOpen(false);
+          }}
+          message={createDialog()}
+        />
+      )}
     </SafeAreaView>
   );
 };

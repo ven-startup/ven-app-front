@@ -5,14 +5,17 @@ import {ActivityIndicator, StyleSheet} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import SubtitleComponent from '../../components/subtitle.component';
-import {createRoomMutation} from '../../graphql/room/mutations.room.graphql';
+import TextComponent from '../../components/text.component';
+import {
+  closeRoomMutation,
+  createRoomMutation,
+} from '../../graphql/room/mutations.room.graphql';
 import {onCreateRoomSubscription} from '../../graphql/room/subscriptions.room.graphql';
 import {Operation} from '../../graphql/room/types.room.graphql';
 import {setApp} from '../../store/slices/app.slice';
 import {Order, cleanRoom} from '../../store/slices/room.slice';
 import {RootState} from '../../store/store';
 import facadeWebRtc from '../../web-rtc/facade.web-rtc';
-import TextComponent from '../../components/text.component';
 
 const WaitingRoomScreen = ({navigation, route}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
@@ -29,13 +32,19 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
   const iceCandidates: string[] = [];
   const dispatch = useDispatch();
 
-  const backToHome = () => {
-    dispatch(setApp({isLoading: false}));
-    navigation.navigate('Home');
-    setTimeout(() => {
-      dispatch(setApp({isLoading: false}));
-      dispatch(cleanRoom());
-    }, 0);
+  const backToHome = async () => {
+    try {
+      dispatch(setApp({isLoading: true}));
+      await API.graphql<GraphQLQuery<Operation>>(closeRoomMutation());
+    } catch (error) {
+      console.error(error);
+    } finally {
+      navigation.navigate('Home');
+      setTimeout(() => {
+        dispatch(setApp({isLoading: false}));
+        dispatch(cleanRoom());
+      }, 0);
+    }
   };
 
   // Configure WebRTC events

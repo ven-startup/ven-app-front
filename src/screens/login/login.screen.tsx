@@ -1,12 +1,14 @@
 import {CognitoHostedUIIdentityProvider} from '@aws-amplify/auth';
 import {Auth, Hub} from 'aws-amplify';
 import * as React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch} from 'react-redux';
+import FloatButtonComponent from '../../components/float-button.component';
+import SubtitleComponent from '../../components/subtitle.component';
+import TitleComponent from '../../components/title.component';
 import {validatedAuthenticated} from '../../security/authentication/authentication';
 import {setApp} from '../../store/slices/app.slice';
-import {fonts} from '../../themes/fonts.themes';
 import google from './../../../assets/images/google.png';
 
 const LoginScreen = ({navigation, route}: any) => {
@@ -31,22 +33,24 @@ const LoginScreen = ({navigation, route}: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Just Talk</Text>
-        <Text style={styles.subtitle}>
-          Conversa al instante con personas que quieren escucharte!
-        </Text>
+        <TitleComponent style={styles.title} text="Ven" />
+        <SubtitleComponent
+          style={styles.subtitle}
+          text="Conversa al instante con personas que quieren escucharte!"
+        />
       </View>
       <View style={styles.buttonsContainer}>
-        <TouchableOpacity
+        <FloatButtonComponent
+          styles={styles.googleButtonContainer}
+          stylesIcon={styles.googleButton}
+          icon={google}
           onPress={() => {
             Auth.federatedSignIn({
               provider: CognitoHostedUIIdentityProvider.Google,
             });
-
             dispatch(setApp({isLoading: true}));
-          }}>
-          <Image source={google} style={styles.googleButton} />
-        </TouchableOpacity>
+          }}
+        />
       </View>
     </SafeAreaView>
   );
@@ -60,6 +64,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 10,
   },
   titleContainer: {
     flex: 1,
@@ -67,16 +72,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontFamily: fonts.ArialRoundedMT,
-    color: 'black',
     fontSize: 50,
-    textAlign: 'center',
+    marginBottom: 10,
   },
   subtitle: {
-    fontFamily: fonts.ArialRoundedMT,
-    color: 'black',
     fontSize: 15,
-    textAlign: 'center',
   },
   buttonsContainer: {
     flex: 1,
@@ -84,13 +84,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  googleButton: {
-    height: 64,
-    width: 64,
-    marginRight: 25,
+  googleButtonContainer: {
+    width: 80,
+    height: 80,
+    backgroundColor: 'white',
+    elevation: 5,
   },
-  facebookButton: {
-    height: 64,
-    width: 64,
+  googleButton: {
+    width: 40,
+    height: 40,
   },
 });

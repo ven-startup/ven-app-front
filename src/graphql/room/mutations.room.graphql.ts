@@ -25,3 +25,27 @@ export const createRoomMutation = (createRoomInput: CreateRoomInput) => {
   `;
   return graphqlOperation(mutation, {input: createRoomInput});
 };
+
+export const closeRoomMutation = () => {
+  console.info('Call Create Room Mutation');
+  const mutation = gql`
+    mutation CloseRoomMutation {
+      closeRoom {
+        user
+        order
+        friend {
+          user
+          birthday
+          gender
+          offer
+          answer
+          iceCandidates
+          nickname
+          topicsToListen
+          topicsToTalk
+        }
+      }
+    }
+  `;
+  return graphqlOperation(mutation);
+};

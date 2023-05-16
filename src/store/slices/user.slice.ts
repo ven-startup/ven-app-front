@@ -8,6 +8,8 @@ export interface User {
   gender?: Gender | string;
   topicsToTalk?: string[];
   topicsToListen?: string[];
+  creationDate?: string;
+  personalInformationUpdateDate?: string;
   host?: string;
 }
 
@@ -24,6 +26,8 @@ const initialState = {
     gender: '',
     topicsToTalk: [],
     topicsToListen: [],
+    creationDate: '',
+    personalInformationUpdateDate: '',
     host: '',
   } as User,
 };

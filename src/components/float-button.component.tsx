@@ -7,8 +7,9 @@ import {
 } from 'react-native';
 
 interface FloatButtonComponentProps {
-  styles?: Record<string, string | number>;
+  styles?: Record<string, any>;
   icon?: ImageSourcePropType;
+  stylesIcon?: Record<string, any>;
   onPress?: () => any;
 }
 
@@ -17,7 +18,12 @@ const FloatButtonComponent = (props: FloatButtonComponentProps) => {
     <TouchableOpacity
       onPress={props.onPress}
       style={{...styles.floatButtonContainer, ...props.styles}}>
-      {props.icon && <Image source={props.icon} style={styles.icon} />}
+      {props.icon && (
+        <Image
+          source={props.icon}
+          style={{...styles.icon, ...props.stylesIcon}}
+        />
+      )}
     </TouchableOpacity>
   );
 };

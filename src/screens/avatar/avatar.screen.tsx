@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {Image, StyleSheet, TouchableOpacity, View} from 'react-native';
 import FastImage from 'react-native-fast-image';
 import {launchCamera} from 'react-native-image-picker';
 import {
@@ -12,6 +12,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import faceRecognition from '../../../assets/images/face-recognition.png';
+import remove from '../../../assets/images/remove.png';
 import ErrorComponent from '../../components/error.component';
 import FloatButtonComponent from '../../components/float-button.component';
 import NavigationComponent from '../../components/navigation.component';
@@ -22,17 +23,25 @@ import {setApp} from '../../store/slices/app.slice';
 import {RootState} from '../../store/store';
 import avatarUtil from '../../utils/avatar.util';
 import {API_AVATAR} from '../../utils/constants.util';
-import remove from '../../../assets/images/remove.png';
 
-const AvatarScreen = ({navigation}: any) => {
+const AvatarScreen = ({navigation, route}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
+  const isUpdateFlow = route?.params?.isUpdateFlow;
+  const setUriAvatarHome = route?.params?.setUriAvatar;
   const dispatch = useDispatch();
   // declared for camera
   const [uriAvatar, setUriAvatar] = React.useState<string | null>(null);
   const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   const onPressBackButton = () => {
-    navigation.navigate('MyData');
+    if (isUpdateFlow) {
+      if (uriAvatar) {
+        setUriAvatarHome(uriAvatar);
+      }
+      navigation.navigate('Home');
+    } else {
+      navigation.navigate('MyData');
+    }
   };
   const onPressNextButton = () => {
     if (uriAvatar) {
@@ -111,10 +120,14 @@ const AvatarScreen = ({navigation}: any) => {
     <SafeAreaView style={styles.myDataContainer}>
       <NavigationComponent
         onPressBackButton={onPressBackButton}
-        onPressNextButton={onPressNextButton}
+        onPressNextButton={isUpdateFlow ? null : onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={4} actualStep={3} style={styles.step} />
+      {isUpdateFlow ? (
+        <View style={styles.spaceVertical} />
+      ) : (
+        <StepComponent total={4} actualStep={3} style={styles.step} />
+      )}
       <TitleComponent text="Avatar" style={styles.title} />
       <SubtitleComponent
         text="Tomate una foto para crear tu propio avatar!"
@@ -163,6 +176,9 @@ const styles = StyleSheet.create({
   },
   step: {
     marginBottom: 27,
+  },
+  spaceVertical: {
+    height: 52,
   },
   title: {
     marginBottom: 21,

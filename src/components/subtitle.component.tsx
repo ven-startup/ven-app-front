@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   subtitle: {
-    fontFamily: fonts.ArialRoundedMT,
+    fontFamily: fonts.ArialRoundedMTBold,
     fontSize: 20,
     textAlign: 'center',
     color: 'black',

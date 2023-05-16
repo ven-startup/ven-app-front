@@ -1,10 +1,13 @@
+import {GraphQLQuery} from '@aws-amplify/api';
+import {API} from 'aws-amplify';
 import dayjs from 'dayjs';
 import * as React from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useDispatch, useSelector} from 'react-redux';
 import calendar from '../../../assets/images/calendar.png';
+import DialogComponent from '../../components/dialog.component';
 import ErrorComponent from '../../components/error.component';
 import NavigationComponent from '../../components/navigation.component';
 import SelectElementComponent from '../../components/select-element.component';
@@ -14,14 +17,17 @@ import TextInputComponent from '../../components/text-input.component';
 import TextComponent from '../../components/text.component';
 import TitleComponent from '../../components/title.component';
 import {Gender} from '../../contexts/user.context';
-import female from './../../../assets/images/female.png';
-import male from './../../../assets/images/male.png';
+import {updateUserPersonalInformationMutation} from '../../graphql/user/mutations.user.graphql';
+import {Operation} from '../../graphql/user/types.user.graphql';
+import {setApp} from '../../store/slices/app.slice';
 import {setUser} from '../../store/slices/user.slice';
 import {RootState} from '../../store/store';
-import DialogComponent from '../../components/dialog.component';
+import female from './../../../assets/images/female.png';
+import male from './../../../assets/images/male.png';
 
-const MyDataScreen = ({navigation}: any) => {
+const MyDataScreen = ({navigation, route}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
+  const isUpdateFlow = route?.params?.isUpdateFlow;
   const dispatch = useDispatch();
   // declared for birthday
   const [datePickerSelected, setDatePickerSelected] = React.useState(
@@ -43,7 +49,18 @@ const MyDataScreen = ({navigation}: any) => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
 
   const onPressBackButton = () => {
-    navigation.navigate('Nickname');
+    if (isUpdateFlow) {
+      if (isValidateBirthday(birthday) && isValidateGender(gender)) {
+        user.birthday = birthday;
+        user.gender = gender;
+        dispatch(setUser(user));
+        setIsDialogOpen(true);
+      } else {
+        navigation.navigate('Home');
+      }
+    } else {
+      navigation.navigate('Nickname');
+    }
   };
   const onPressNextButton = () => {
     if (isValidateBirthday(birthday) && isValidateGender(gender)) {
@@ -107,10 +124,14 @@ const MyDataScreen = ({navigation}: any) => {
     <SafeAreaView style={styles.myDataContainer}>
       <NavigationComponent
         onPressBackButton={onPressBackButton}
-        onPressNextButton={onPressNextButton}
+        onPressNextButton={isUpdateFlow ? null : onPressNextButton}
         style={styles.navigation}
       />
-      <StepComponent total={4} actualStep={2} style={styles.step} />
+      {isUpdateFlow ? (
+        <View style={styles.spaceVertical} />
+      ) : (
+        <StepComponent total={4} actualStep={2} style={styles.step} />
+      )}
       <TitleComponent text="Mis Datos" style={styles.title} />
       <SubtitleComponent
         text="Estos datos no podrán ser modificados en 6 meses.&#10;Revísalos bien!"
@@ -149,8 +170,23 @@ const MyDataScreen = ({navigation}: any) => {
           cancelAction={() => {
             setIsDialogOpen(false);
           }}
-          acceptAction={() => {
-            navigation.navigate('Avatar');
+          acceptAction={async () => {
+            if (isUpdateFlow) {
+              try {
+                dispatch(setApp({isLoading: true}));
+                await API.graphql<GraphQLQuery<Operation>>(
+                  updateUserPersonalInformationMutation({birthday, gender}),
+                );
+                dispatch(setUser(user));
+                navigation.navigate('Home');
+              } catch (error) {
+                console.error(error);
+              } finally {
+                dispatch(setApp({isLoading: false}));
+              }
+            } else {
+              navigation.navigate('Avatar');
+            }
             setIsDialogOpen(false);
           }}
           message={createDialog()}
@@ -173,6 +209,9 @@ const styles = StyleSheet.create({
   },
   step: {
     marginBottom: 27,
+  },
+  spaceVertical: {
+    height: 52,
   },
   title: {
     marginBottom: 78,

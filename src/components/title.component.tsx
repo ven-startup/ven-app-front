@@ -17,8 +17,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   title: {
-    fontFamily: fonts.ArialRoundedMT,
-    fontWeight: '100',
+    fontFamily: fonts.ArialRoundedMTBold,
     fontSize: 30,
     textAlign: 'center',
     color: 'black',
