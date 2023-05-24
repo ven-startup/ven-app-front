@@ -1,5 +1,6 @@
 import {GraphQLQuery} from '@aws-amplify/api/lib-esm/types';
 import {API} from 'aws-amplify';
+import dayjs from 'dayjs';
 import * as React from 'react';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
@@ -32,7 +33,10 @@ const TopicsToListenScreen = ({navigation}: any) => {
       );
       const allTopics: string[] = [];
       topics?.data?.listTopics?.forEach(topic => {
-        allTopics.push(...(topic?.topicsToTalk ?? []));
+        const minimunDate = dayjs().subtract(1, 'minute');
+        if (minimunDate.isBefore(dayjs(new Date(topic.updatedAt as string)))) {
+          allTopics.push(...(topic?.topicsToTalk ?? []));
+        }
       });
       setTopicsToListen(removeRepeatTopic(allTopics));
     } catch (error) {
