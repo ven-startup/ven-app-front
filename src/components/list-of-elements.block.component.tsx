@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   text: {
+    textAlign: 'center',
     fontSize: 21,
     color: '#000000',
   },
