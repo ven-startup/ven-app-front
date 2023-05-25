@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontFamily: fonts.ArialRoundedMTBold,
-    fontSize: 20,
+    fontSize: 18,
     textAlign: 'center',
     color: 'black',
   },

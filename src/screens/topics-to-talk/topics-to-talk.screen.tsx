@@ -76,8 +76,11 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
 
   /// Functions for topic to talk
   const onChangeTopicToTalk = (newTopicToTalk: string) => {
-    setTopicToTalk(clearTopicToTalk(newTopicToTalk));
+    if (clearTopicToTalk(newTopicToTalk).length <= 50) {
+      setTopicToTalk(newTopicToTalk);
+    }
   };
+
   const clearTopicToTalk = (newTopicToTalk: string): string => {
     let cleanNewTopicToTalk = newTopicToTalk;
     const alphanumericRegex = /[^a-zA-Z0-9áéíóúÁÉÍÓÚ]/g;
@@ -87,24 +90,35 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
     ) {
       cleanNewTopicToTalk = cleanNewTopicToTalk.replace(alphanumericRegex, '');
     }
-    if (cleanNewTopicToTalk.length > 20) {
-      cleanNewTopicToTalk = cleanNewTopicToTalk.substring(0, 20);
-    }
     return cleanNewTopicToTalk;
   };
+
   const addTopicToTalkToList = () => {
+    const topicToTalkFormated = formatTopicToTalk(topicToTalk);
+    const topicToTalkFormatedAndClean = clearTopicToTalk(topicToTalkFormated);
     if (
-      topicToTalk !== '' &&
+      topicToTalkFormatedAndClean !== '' &&
       !listOfTopicToTalk.some(
         topicToTalkRegister =>
-          topicToTalkRegister.toLowerCase() === topicToTalk.toLowerCase(),
+          topicToTalkRegister.toLowerCase() ===
+          topicToTalkFormatedAndClean.toLowerCase(),
       )
     ) {
       const newListOfTopicToTalk = [...listOfTopicToTalk];
-      newListOfTopicToTalk.push(topicToTalk);
+      newListOfTopicToTalk.push(topicToTalkFormatedAndClean);
       setListOfTopicToTalk(newListOfTopicToTalk);
       setTopicToTalk('');
     }
+  };
+
+  const formatTopicToTalk = (newTopicToTalk: string): string => {
+    const topicToStartUpperCase =
+      newTopicToTalk.charAt(0).toUpperCase() + newTopicToTalk.slice(1);
+    const topicToStartUpperCaseAfterSpace = topicToStartUpperCase.replace(
+      /(\s\w)/g,
+      match => match.toUpperCase(),
+    );
+    return topicToStartUpperCaseAfterSpace;
   };
 
   /// Functions for list for topics to talk
@@ -161,7 +175,7 @@ const TopicsToTalkScreen = ({navigation, route}: any) => {
       )}
       <TitleComponent text="¿De que puedo hablar?" style={styles.title} />
       <SubtitleComponent
-        text="Un nuevo amigo espera con ansias poder escucharte!"
+        text={`Coloca los temas sobre los que puedes hablar, siempre hay alguien que le interesara escucharte! ${'\u2764'}`}
         style={styles.subtitle}
       />
       <ListOfElementsComponent
