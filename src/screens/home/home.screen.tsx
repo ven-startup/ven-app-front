@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
   topicsToTalkContainer: {},
   topicsToTalkSubTitle: {
     textDecorationLine: 'underline',
+    marginBottom: 10,
   },
   talkButton: {},
 });

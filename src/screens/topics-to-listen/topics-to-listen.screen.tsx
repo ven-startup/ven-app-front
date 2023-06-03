@@ -16,6 +16,7 @@ import {setRoom} from '../../store/slices/room.slice';
 import {User} from '../../store/slices/user.slice';
 import {RootState} from '../../store/store';
 import {API_MATCH} from '../../utils/constants.util';
+import ven from './../../../assets/images/ven.png';
 
 const TopicsToListenScreen = ({navigation}: any) => {
   const user = useSelector((state: RootState) => state.user.value);
@@ -100,8 +101,8 @@ const TopicsToListenScreen = ({navigation}: any) => {
         );
         setTopicsToListen(currentTopicsToListen => {
           return removeRepeatTopic([
-            ...value?.data?.onCreateTopic?.topicsToTalk,
             ...currentTopicsToListen,
+            ...value?.data?.onCreateTopic?.topicsToTalk,
           ]);
         });
       },
@@ -151,13 +152,14 @@ const TopicsToListenScreen = ({navigation}: any) => {
       <NavigationComponent
         onPressBackButton={onPressBackButton}
         style={styles.navigation}
-        title={'¿Qué quiero escuchar?'}
+        title={'Quiero escuchar sobre ...'}
       />
       <TimerComponent style={styles.timer} />
       <ListOfElementsBlockComponent
         elements={topicsToListen}
         prefix="#"
         removeElement={removeElement}
+        iconForAnimationToRemoveElement={ven}
       />
     </SafeAreaView>
   );

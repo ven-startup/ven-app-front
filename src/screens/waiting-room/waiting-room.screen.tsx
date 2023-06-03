@@ -246,8 +246,7 @@ const WaitingRoomScreen = ({navigation, route}: any) => {
             });
         } else if (
           value?.data?.onCreateRoom?.friend?.iceCandidates &&
-          room.webRTC.rtcPeerConnection.localDescription &&
-          room.webRTC.rtcPeerConnection.remoteDescription
+          room.webRTC.rtcPeerConnection.localDescription
         ) {
           facadeWebRtc.processCandidates(
             room.webRTC.rtcPeerConnection,
